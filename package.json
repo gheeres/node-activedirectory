@@ -1,0 +1,10 @@
+{
+    "name": "node-activedirectory"
+  , "version": "0.0.1"
+  , "private": true
+  , "dependencies": {
+      "ldapjs": ">= 0.5.7"
+    , "async": ">= 0.1.22"
+    , "underscore": ">= 1.4.3"
+  }
+}
