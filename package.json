@@ -11,7 +11,7 @@
     "node": ">=0.8"
   }
   , "keywords": [
-      "ldap",
+      "ldap"
 	, "active directory"
   ]
   , "bugs": {
