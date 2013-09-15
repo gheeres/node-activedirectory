@@ -1,10 +1,30 @@
 {
-    "name": "node-activedirectory"
+    "author": "George H. <github@heeresonline.com>"
+  , "name": "activedirectory"
   , "version": "0.0.1"
-  , "private": true
+  , "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations."
+  , "main": "index.js"
+  , "directories": {
+    "lib": "./lib"
+  }
+  , "engines": {
+    "node": ">=0.8"
+  }
+  , "keywords": [
+      "ldap",
+	, "active directory"
+  ]
+  , "bugs": {
+    "url": "https://github.com/gheeres/node-activedirectory/issues"
+  }
   , "dependencies": {
       "ldapjs": ">= 0.5.7"
     , "async": ">= 0.1.22"
     , "underscore": ">= 1.4.3"
   }
+  , "repository" : {
+      "type" : "git"
+    , "url" : "https://github.com/gheeres/node-activedirectory.git"
+  }
+  , "license": "BSD"
 }
