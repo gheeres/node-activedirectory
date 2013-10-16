@@ -151,7 +151,7 @@ __Example__
 ```js
 // Any of the following group names can be searched on
 var groupName = 'Employees';
-var dn: 'CN=Employees,OU=Groups,DC=domain,DC=com'
+var dn = 'CN=Employees,OU=Groups,DC=domain,DC=com'
 
 // Find group by common name
 var ad = new ActiveDirectory(config);
