@@ -1,5 +1,5 @@
 {
-    "author": "George H. <github@heeresonline.com>"
+    "author": "George Heeres <gheeres@gmail.com>"
   , "name": "activedirectory"
   , "version": "0.1.2"
   , "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations."
@@ -26,5 +26,5 @@
       "type" : "git"
     , "url" : "https://github.com/gheeres/node-activedirectory.git"
   }
-  , "license": "BSD"
+  , "license": "MIT"
 }
