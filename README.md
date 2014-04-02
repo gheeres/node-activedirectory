@@ -39,10 +39,40 @@ var ActiveDirectory = require('activedirectory');
 var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
                                baseDN: 'dc=domain,dc=com',
                                username: 'username@domain.com',
-                               password: 'password' };);
+                               password: 'password' });
 ```
 
 The username and password specified in the configuration are what are used for user and group lookup operations.
+
+By default, the following attributes are returned for users and groups:
+
+* user - userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
+* group - objectCategory, distinguishedName, cn, description, member
+
+If you need to override those defaults, then you can override them when you create your ActiveDirectory instance:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: {
+                                 user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
+                                 group: [ 'anotherCustomAttribute', 'objectCategory' ]
+                               }
+                              });
+```
+or
+```js
+var ad = new ActiveDirectory(url, baseDN, username, password, {
+                             attributes: {
+                               user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
+                               group: [ '
+                             });
+```
+
+If overriding the 'user' or 'group' attribute, you must specify ALL of the attributes you want. The existing defaults
+will be overridden. Optionally, you can override the attributes on a per call basis using the 'opts' parameter.
 
 ---------------------------------------
 
