@@ -7,6 +7,7 @@ ActiveDirectory is an ldapjs client for authN (authentication) and authZ (author
   - Authorization (via group membership information)
   - Nested groups support
   - Range specifier / retrieval support (http://msdn.microsoft.com/en-us/library/dd358433.aspx)
+  - Referral support
 
 Required Libraries
 -----------
@@ -15,7 +16,7 @@ ActiveDirectory uses the following additional node modules:
 
 * [underscore] - a utility-belt library for JavaScript that provides a lot of the functional programming support
 * [async] - Async utilities for node and the browser
-* [ldapjs] - a pure JavaScript, from-scratch framework for implementing LDAP clients and servers in Node.js
+* [ldapjs] - A pure JavaScript, from-scratch framework for implementing LDAP clients and servers in Node.js
 
 Installation
 --------------
@@ -44,7 +45,7 @@ var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
 
 The username and password specified in the configuration are what are used for user and group lookup operations.
 
-__Notes__
+__Attributes__
 
 By default, the following attributes are returned for users and groups:
 
@@ -75,6 +76,48 @@ var ad = new ActiveDirectory(url, baseDN, username, password, {
 
 If overriding the 'user' or 'group' attribute, you must specify ALL of the attributes you want. The existing defaults
 will be overridden. Optionally, you can override the attributes on a per call basis using the 'opts' parameter.
+
+__Referrals__
+By default, referral chasing is disabled. To enable it, specify a referrals attribute when you create your instance.
+The referrals object has the following syntax:
+
+```js
+{
+  referrals: {
+    enabled: false,
+    excluded: [
+      'ldaps?://ForestDnsZones\./.*',
+      'ldaps?://DomainDnsZones\./.*',
+      'ldaps?://.*/CN=Configuration,.*'
+    ]
+  }
+}
+```
+
+The 'excluded' options is a list of regular expression filters to ignore specific referrals. The default exclusion list
+is included above, ignoring the special partitions that ActiveDirectory creates by default. To specify these options,
+override them as follows:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: { ... },
+                               referrals: {
+                                 enabled: true,
+                                 excluded: [ ]
+                               }
+                              });
+```
+or
+```js
+var ad = new ActiveDirectory(url, baseDN, username, password, {
+                             attributes: { ... },
+                             referrals: { enabled: true });
+```
+
+If you enable referral chasing, the specified username MUST be a userPrincipalName.
 
 ---------------------------------------
 
