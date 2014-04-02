@@ -44,6 +44,8 @@ var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
 
 The username and password specified in the configuration are what are used for user and group lookup operations.
 
+__Notes__
+
 By default, the following attributes are returned for users and groups:
 
 * user - userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
