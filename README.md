@@ -503,7 +503,8 @@ ad.findGroup(groupName, function(err, group) {
 <a name="findGroups" />
 ### findGroups(opts, callback)
 
-Perform a generic search for groups that match the specified filter.
+Perform a generic search for groups that match the specified filter. The default LDAP filter for groups is
+specified as (&(objectClass=group)(!(objectClass=computer))(!(objectClass=user))(!(objectClass=person)))
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
