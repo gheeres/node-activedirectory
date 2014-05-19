@@ -124,9 +124,12 @@ If you enable referral chasing, the specified username MUST be a userPrincipalNa
 Documentation
 --------------
 * [authenticate](#authenticate)
+* [isUserMemberOf](#isUserMemberOf)
+* [find](#find)
 * [findUser](#findUser)
 * [findGroup](#findGroup)
-* [isUserMemberOf](#isUserMemberOf)
+* [findUsers](#findUsers)
+* [findGroups](#findGroups)
 * [groupExists](#groupExists)
 * [userExists](#userExists)
 * [getGroupMembershipForGroup](#getGroupMembershipForGroup)
@@ -164,82 +167,6 @@ ad.authenticate(username, password, function(err, auth) {
   }
   else {
     console.log('Authentication failed!');
-  }
-});
-```
-
----------------------------------------
-
-<a name="findUser" />
-### findUser(opts, username, includeMembership, callback)
-
-Looks up or finds a username by their sAMAccountName, userPrincipalName, distinguishedName (dn) or custom filter. If found, the returned object contains all of the requested attributes. By default, the following attributes are returned: 
-
-* userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
-
-__Arguments__
-
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
-* username - The username to retrieve information about. Optionally can pass in the distinguishedName (dn) of the user to retrieve.
-* includeMembership - Indicates if the request should also retrieve the group memberships for the user. Default = false;
-* callback(err, user) - The callback to execute when completed. callback(err: {Object}, user: {User})
-
-__Example__
-
-```js
-// Any of the following username types can be searched on
-var sAMAccountName = 'username';
-var userPrincipalName = 'username@domain.com';
-var dn = 'CN=Smith\\, John,OU=UUsers,DC=domain,DC=com';
-
-// Find user by a sAMAccountName
-var ad = new ActiveDirectory(config);
-ad.findUser(sAMAccountName, function(err, user) {
-  if (err) {
-    console.log('ERROR: ' +JSON.stringify(err));
-    return;
-  }
-
-  if (! user) console.log('User: ' + sAMAccountName + ' not found.');
-  else console.log(JSON.stringify(user));
-});
-```
-
----------------------------------------
-
-<a name="findGroup" />
-### findGroup(opts, groupName, callback)
-
-Looks up or find a group by common name (CN) which is required to be unique in Active Directory or optionally by the distinguished name. Supports groups with range retrieval specifiers. The following attributes are returned by default for the group:
-
-* objectCategory, distinguishedName, cn, description, member
-
-__Arguments__
-
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
-* groupName -  The group (cn) to retrieve information about. Optionally can pass in the distinguishedName (dn) of the group to retrieve.
-* callback(err, group) - The callback to execute when completed. callback(err: {Object}, group: {Group})
-
-
-__Example__
-
-```js
-// Any of the following group names can be searched on
-var groupName = 'Employees';
-var dn = 'CN=Employees,OU=Groups,DC=domain,DC=com'
-
-// Find group by common name
-var ad = new ActiveDirectory(config);
-ad.findGroup(groupName, function(err, group) {
-  if (err) {
-    console.log('ERROR: ' +JSON.stringify(err));
-    return;
-  }
-
-  if (! user) console.log('Group: ' + groupName + ' not found.');
-  else {
-    console.log(group);
-    console.log('Members: ' + (group.member || []).length);
   }
 });
 ```
@@ -420,6 +347,186 @@ ad.getGroupMembershipForGroup(groupName, function(err, groups) {
 });
 ```
 
+---------------------------------------
+
+<a name="find" />
+### find(opts, includeMembership, callback)
+
+Perform a generic search for the specified LDAP query filter. This function will return both
+groups and users that match the specified filter. Any results not recognized as a user or group
+(i.e. computer accounts, etc.) can be found in the 'other' attribute / array of the result.
+
+__Arguments__
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
+* includeMembership - Indicates if the request should also retrieve the group memberships for any user results. Default = false;
+* callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
+
+__Example__
+
+```js
+var query = 'cn=*Exchange*';
+
+var ad = new ActiveDirectory(config);
+ad.find(query, function(err, results) {
+  if ((err) || (! result)) {
+    console.log('ERROR: ' + JSON.stringify(err));
+    return;
+  }
+
+  console.log('Groups');
+  _.each(result.groups, function(group) {
+    console.log('  ' + group.cn);
+  });
+
+  console.log('Users');
+  _.each(result.users, function(user) {
+    console.log('  ' + user.cn);
+  });
+
+  console.log('Other');
+  _.each(result.other, function(other) {
+    console.log('  ' + other.cn);
+  });
+});
+```
+
+---------------------------------------
+
+<a name="findUser" />
+### findUser(opts, username, includeMembership, callback)
+
+Looks up or finds a username by their sAMAccountName, userPrincipalName, distinguishedName (dn) or custom filter. If found, the returned object contains all of the requested attributes. By default, the following attributes are returned:
+
+* userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
+
+__Arguments__
+
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* username - The username to retrieve information about. Optionally can pass in the distinguishedName (dn) of the user to retrieve.
+* includeMembership - Indicates if the request should also retrieve the group memberships for the user. Default = false;
+* callback(err, user) - The callback to execute when completed. callback(err: {Object}, user: {User})
+
+__Example__
+
+```js
+// Any of the following username types can be searched on
+var sAMAccountName = 'username';
+var userPrincipalName = 'username@domain.com';
+var dn = 'CN=Smith\\, John,OU=Users,DC=domain,DC=com';
+
+// Find user by a sAMAccountName
+var ad = new ActiveDirectory(config);
+ad.findUser(sAMAccountName, function(err, user) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  if (! user) console.log('User: ' + sAMAccountName + ' not found.');
+  else console.log(JSON.stringify(user));
+});
+```
+
+---------------------------------------
+
+<a name="findUsers" />
+### findUsers(opts, includeMembership, callback)
+
+Perform a generic search for users that match the specified filter. The default LDAP filter for users is
+specified as (&(|(objectClass=user)(objectClass=person))(!(objectClass=computer))(!(objectClass=group)))
+
+__Arguments__
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
+* includeMembership - Indicates if the request should also retrieve the group memberships for the user. Default = false;
+* callback - The callback to execute when completed. callback(err: {Object}, users: {Array[User]})
+
+__Example__
+
+```js
+var query = 'cn=*George*';
+
+var ad = new ActiveDirectory(config);
+ad.findUsers(query, true, function(err, users) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  if ((! users) || (users.length == 0)) console.log('No users found.');
+  else {
+    console.log('findUsers: '+JSON.stringify(users));
+  }
+});
+```
+
+---------------------------------------
+
+<a name="findGroup" />
+### findGroup(opts, groupName, callback)
+
+Looks up or find a group by common name (CN) which is required to be unique in Active Directory or optionally by the distinguished name. Supports groups with range retrieval specifiers. The following attributes are returned by default for the group:
+
+* objectCategory, distinguishedName, cn, description, member
+
+__Arguments__
+
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* groupName -  The group (cn) to retrieve information about. Optionally can pass in the distinguishedName (dn) of the group to retrieve.
+* callback(err, group) - The callback to execute when completed. callback(err: {Object}, group: {Group})
+
+
+__Example__
+
+```js
+// Any of the following group names can be searched on
+var groupName = 'Employees';
+var dn = 'CN=Employees,OU=Groups,DC=domain,DC=com'
+
+// Find group by common name
+var ad = new ActiveDirectory(config);
+ad.findGroup(groupName, function(err, group) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  if (! user) console.log('Group: ' + groupName + ' not found.');
+  else {
+    console.log(group);
+    console.log('Members: ' + (group.member || []).length);
+  }
+});
+```
+
+---------------------------------------
+
+<a name="findGroups" />
+### findGroups(opts, callback)
+
+Perform a generic search for groups that match the specified filter.
+
+__Arguments__
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
+* callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
+
+__Example__
+
+```js
+var query = 'CN=*Admin*';
+
+var ad = new ActiveDirectory(config);
+ad.findGroups(query, function(err, groups) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  if ((! groups) || (groups.length == 0)) console.log('No groups found.');
+  else {
+    console.log('findGroups: '+JSON.stringify(groups));
+  }
+});
+```
 
   [underscore]: http://underscorejs.org/
   [async]: https://github.com/caolan/async
