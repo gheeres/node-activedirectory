@@ -1,7 +1,7 @@
 {
     "author": "George Heeres <gheeres@gmail.com>"
   , "name": "activedirectory"
-  , "version": "0.4.1"
+  , "version": "0.5.0"
   , "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations."
   , "main": "index.js"
   , "directories": {
@@ -18,7 +18,7 @@
     "url": "https://github.com/gheeres/node-activedirectory/issues"
   }
   , "dependencies": {
-      "ldapjs": ">= 0.5.7"
+      "ldapjs": ">= 0.7.1"
     , "async": ">= 0.1.22"
     , "underscore": ">= 1.4.3"
   }
