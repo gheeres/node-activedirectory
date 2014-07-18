@@ -7,6 +7,7 @@ ActiveDirectory is an ldapjs client for authN (authentication) and authZ (author
   - Authorization (via group membership information)
   - Nested groups support
   - Range specifier / retrieval support (http://msdn.microsoft.com/en-us/library/dd358433.aspx)
+  - Automatic paging support (Active Directory results (MaxPageSize) limited to 1000 per request by default)
   - Referral support
 
 Required Libraries
