@@ -136,6 +136,7 @@ Documentation
 * [getGroupMembershipForGroup](#getGroupMembershipForGroup)
 * [getGroupMembershipForUser](#getGroupMembershipForUser)
 * [getUsersForGroup](#getUsersForGroup)
+* [getRootDSE](#getRootDSE)
 
 ---------------------------------------
 
