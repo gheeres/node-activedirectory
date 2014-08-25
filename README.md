@@ -530,6 +530,38 @@ ad.findGroups(query, function(err, groups) {
 });
 ```
 
+---------------------------------------
+
+<a name="getRootDSE" />
+### getRootDSE(url, attributess, callback)
+
+Retrieves the root DSE for the specified url. Can be called statically.
+
+__Arguments__
+* url - The url to retrieve the root DSE for.
+* attributes - The optional list of attributes to retrieve. Returns all if not specified.
+* callback - The callback to execute when completed. callback(err: {Object}, result: {Object})
+
+__Example__
+
+```js
+var url = 'ldap://yourdomain.com';
+ActiveDirectory.prototype.getRootDSE(url, [ 'defaultNamingContext' ], function(err, result) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  console.log('getRootDSE: '+JSON.stringify(result));
+});
+
+// Or can be called with an instance...
+var ad = new ActiveDirectory(config);
+ad.getRootDSE(function(err, result) {
+  //...
+});
+```
+
   [underscore]: http://underscorejs.org/
   [async]: https://github.com/caolan/async
   [ldapjs]: http://ldapjs.org/
