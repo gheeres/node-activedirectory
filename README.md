@@ -534,7 +534,7 @@ ad.findGroups(query, function(err, groups) {
 ---------------------------------------
 
 <a name="getRootDSE" />
-### getRootDSE(url, attributess, callback)
+### getRootDSE(url, attributes, callback)
 
 Retrieves the root DSE for the specified url. Can be called statically.
 
