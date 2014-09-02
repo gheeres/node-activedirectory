@@ -8,7 +8,7 @@ ActiveDirectory is an ldapjs client for authN (authentication) and authZ (author
   - Nested groups support
   - Range specifier / retrieval support (http://msdn.microsoft.com/en-us/library/dd358433.aspx)
   - Automatic paging support (Active Directory results (MaxPageSize) limited to 1000 per request by default)
-  - Recycle bin (tombston) query support
+  - Recycle bin (tombstone) query support
   - Referral support
 
 Required Libraries
@@ -402,11 +402,11 @@ items in the recycle bin.
  
 More information about tombstoning and enabling can be found at:
  
-[Enable the Active Directory Recycle Bin (and other New Features)](http://technet.microsoft.com/en-us/magazine/ff793473.aspx)
-[Reanimating Active Directory Tombstone Objects](http://technet.microsoft.com/en-us/magazine/2007.09.tombstones.aspx)
+* [Enable the Active Directory Recycle Bin (and other New Features)](http://technet.microsoft.com/en-us/magazine/ff793473.aspx)
+* [Reanimating Active Directory Tombstone Objects](http://technet.microsoft.com/en-us/magazine/2007.09.tombstones.aspx)
 
-Note: That when an item is tombstones,
-not all attributes for an item are retained.
+Note: That when an LDAP entry / object is tombstoned, not all attributes for that item are retained. 
+This is a limitation of Active Directory itself and not the library itself.
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
