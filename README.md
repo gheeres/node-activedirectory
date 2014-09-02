@@ -8,6 +8,7 @@ ActiveDirectory is an ldapjs client for authN (authentication) and authZ (author
   - Nested groups support
   - Range specifier / retrieval support (http://msdn.microsoft.com/en-us/library/dd358433.aspx)
   - Automatic paging support (Active Directory results (MaxPageSize) limited to 1000 per request by default)
+  - Recycle bin (tombston) query support
   - Referral support
 
 Required Libraries
@@ -137,7 +138,7 @@ Documentation
 * [getGroupMembershipForUser](#getGroupMembershipForUser)
 * [getUsersForGroup](#getUsersForGroup)
 * [getRootDSE](#getRootDSE)
-
+* [findDeletedObjects](#findDeletedObjects)
 ---------------------------------------
 
 <a name="authenticate" />
@@ -352,7 +353,7 @@ ad.getGroupMembershipForGroup(groupName, function(err, groups) {
 ---------------------------------------
 
 <a name="find" />
-### find(opts, includeMembership, callback)
+### find(opts, callback)
 
 Perform a generic search for the specified LDAP query filter. This function will return both
 groups and users that match the specified filter. Any results not recognized as a user or group
@@ -388,6 +389,44 @@ ad.find(query, function(err, results) {
   _.each(result.other, function(other) {
     console.log('  ' + other.cn);
   });
+});
+```
+
+---------------------------------------
+
+<a name="findDeletedObjects" />
+### findDeletedObjects(opts, callback)
+
+If tombstoning (recycle bin) is enabled for the Active Directory installation, use findDeletedObjects to retrieve
+items in the recycle bin.
+ 
+More information about tombstoning and enabling can be found at:
+ 
+[Enable the Active Directory Recycle Bin (and other New Features)](http://technet.microsoft.com/en-us/magazine/ff793473.aspx)
+[Reanimating Active Directory Tombstone Objects](http://technet.microsoft.com/en-us/magazine/2007.09.tombstones.aspx)
+
+Note: That when an item is tombstones,
+not all attributes for an item are retained.
+
+__Arguments__
+* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
+* callback - The callback to execute when completed. callback(err: {Object}, result: {Array})
+
+__Example__
+
+```js
+var url = 'ldap://yourdomain.com';
+var opts = {
+  baseDN: 'ou=Deleted Objects, dc=yourdomain, dc=com',
+  filter: 'cn=*Bob*'
+};
+ad.findDeletedObjects(opts, function(err, result) {
+  if (err) {
+    console.log('ERROR: ' +JSON.stringify(err));
+    return;
+  }
+
+  console.log('findDeletedObjects: '+JSON.stringify(result));
 });
 ```
 
