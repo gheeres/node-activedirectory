@@ -71,7 +71,7 @@ or
 var ad = new ActiveDirectory(url, baseDN, username, password, {
                              attributes: {
                                user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
-                               group: [ '
+                               group: [ 'anotherCustomAttribute', 'objectCategory' ]
                              });
 ```
 
@@ -360,7 +360,6 @@ groups and users that match the specified filter. Any results not recognized as 
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
-* includeMembership - Indicates if the request should also retrieve the group memberships for any user results. Default = false;
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
 __Example__
