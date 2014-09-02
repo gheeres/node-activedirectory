@@ -412,6 +412,9 @@ __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
 * callback - The callback to execute when completed. callback(err: {Object}, result: {Array})
 
+If the baseDN is not specified, then a RootDSE query will be performed on the attached URL and 'ou-Deleted Objects' 
+will be appended.
+
 __Example__
 
 ```js
