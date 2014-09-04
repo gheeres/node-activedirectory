@@ -181,6 +181,7 @@ Documentation
 * [getUsersForGroup](#getUsersForGroup)
 * [getRootDSE](#getRootDSE)
 * [findDeletedObjects](#findDeletedObjects)
+
 ---------------------------------------
 
 <a name="authenticate" />
