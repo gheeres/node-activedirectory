@@ -80,6 +80,7 @@ If overriding the 'user' or 'group' attribute, you must specify ALL of the attri
 will be overridden. Optionally, you can override the attributes on a per call basis using the 'opts' parameter.
 
 __Referrals__
+
 By default, referral chasing is disabled. To enable it, specify a referrals attribute when you create your instance.
 The referrals object has the following syntax:
 
@@ -123,6 +124,7 @@ var ad = new ActiveDirectory(url, baseDN, username, password, {
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
 
 __Entry parser__
+
 By default, the entry parser only returns the entry.object.
 if you want to manipulate the entry in a different way you can pass a custom parser.
 This is useful, for example, in case you want to change the objectSid or GUID which are binary values.
