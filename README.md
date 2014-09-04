@@ -72,7 +72,7 @@ or
 var ad = new ActiveDirectory(url, baseDN, username, password, {
                              attributes: {
                                user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
-                               group: [ 'anotherCustomAttribute', 'objectCategory' ]
+                               group: [ 'anotherCustomAttribute', 'objectCategory' ] }
                              });
 ```
 
@@ -116,10 +116,50 @@ or
 ```js
 var ad = new ActiveDirectory(url, baseDN, username, password, {
                              attributes: { ... },
-                             referrals: { enabled: true });
+                             referrals: { enabled: true }
+                             });
 ```
 
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
+
+__Entry parser__
+By default, the entry parser only returns the entry.object.
+if you want to manipulate the entry in a different way you can pass a custom parser.
+This is useful, for example, in case you want to change the objectSid or GUID which are binary values.
+an example of a custom parser:
+```js
+var customEntryParser = function(entry, callback){
+    var item = entry.object;
+    if (entry.raw.hasOwnProperty("objectSid")){
+        item.objectSid = entry.raw.objectSid;
+    }
+    if (entry.raw.hasOwnProperty("objectGUID")){
+        item.objectGUID = entry.raw.objectGUID;
+    }
+    callback(item);
+};
+```
+
+If you want to specify your own parser you can override the default parser as follows:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: { ... },
+                               referrals: { ... },
+                               entryParser : customEntryParser
+                              });
+```
+or
+```js
+var ad = new ActiveDirectory(url, baseDN, username, password, {
+                             attributes: { ... },
+                             referrals: { ... },
+                             entryParser : customEntryParser
+                             });
+```
 
 ---------------------------------------
 
