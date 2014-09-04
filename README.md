@@ -72,7 +72,7 @@ or
 var ad = new ActiveDirectory(url, baseDN, username, password, {
                              attributes: {
                                user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
-                               group: [ 'anotherCustomAttribute', 'objectCategory' ]
+                               group: [ 'anotherCustomAttribute', 'objectCategory' ] }
                              });
 ```
 
@@ -116,7 +116,8 @@ or
 ```js
 var ad = new ActiveDirectory(url, baseDN, username, password, {
                              attributes: { ... },
-                             referrals: { enabled: true });
+                             referrals: { enabled: true }
+                             });
 ```
 
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
