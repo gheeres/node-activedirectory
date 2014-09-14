@@ -396,7 +396,7 @@ ad.getGroupMembershipForGroup(groupName, function(err, groups) {
 ---------------------------------------
 
 <a name="find" />
-### find(opts, callback)
+### find(opts, findOpts, callback)
 
 Perform a generic search for the specified LDAP query filter. This function will return both
 groups and users that match the specified filter. Any results not recognized as a user or group
@@ -404,15 +404,21 @@ groups and users that match the specified filter. Any results not recognized as 
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
+* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeGroupsMembership : false, includeDeleted : false }
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
 __Example__
 
 ```js
 var query = 'cn=*Exchange*';
+var findOpts = {
+  includeUsersMembership : true,
+  includeGroupsMembership : true,
+  includeDeleted : false
+}
 
 var ad = new ActiveDirectory(config);
-ad.find(query, function(err, results) {
+ad.find(query, findOpts, function(err, results) {
   if ((err) || (! result)) {
     console.log('ERROR: ' + JSON.stringify(err));
     return;
@@ -479,7 +485,7 @@ ad.findDeletedObjects(opts, function(err, result) {
 ---------------------------------------
 
 <a name="findUser" />
-### findUser(opts, username, includeMembership, callback)
+### findUser(opts, username, findOpts, callback)
 
 Looks up or finds a username by their sAMAccountName, userPrincipalName, distinguishedName (dn) or custom filter. If found, the returned object contains all of the requested attributes. By default, the following attributes are returned:
 
@@ -489,7 +495,8 @@ __Arguments__
 
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
 * username - The username to retrieve information about. Optionally can pass in the distinguishedName (dn) of the user to retrieve.
-* includeMembership - Indicates if the request should also retrieve the group memberships for the user. Default = false;
+* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeDeleted : false };
+for backward compatibility if you pass here boolean it will set the includeUsersMembership with this boolean. please don't pass a boolean in purpose.
 * callback(err, user) - The callback to execute when completed. callback(err: {Object}, user: {User})
 
 __Example__
@@ -516,14 +523,15 @@ ad.findUser(sAMAccountName, function(err, user) {
 ---------------------------------------
 
 <a name="findUsers" />
-### findUsers(opts, includeMembership, callback)
+### findUsers(opts, findOpts, callback)
 
 Perform a generic search for users that match the specified filter. The default LDAP filter for users is
 specified as (&(|(objectClass=user)(objectClass=person))(!(objectClass=computer))(!(objectClass=group)))
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
-* includeMembership - Indicates if the request should also retrieve the group memberships for the user. Default = false;
+* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeDeleted : false };
+for backward compatibility if you pass here boolean it will set the includeUsersMembership with this boolean. please don't pass a boolean in purpose.
 * callback - The callback to execute when completed. callback(err: {Object}, users: {Array[User]})
 
 __Example__
@@ -548,7 +556,7 @@ ad.findUsers(query, true, function(err, users) {
 ---------------------------------------
 
 <a name="findGroup" />
-### findGroup(opts, groupName, callback)
+### findGroup(opts, groupName, findOpts, callback)
 
 Looks up or find a group by common name (CN) which is required to be unique in Active Directory or optionally by the distinguished name. Supports groups with range retrieval specifiers. The following attributes are returned by default for the group:
 
@@ -558,6 +566,7 @@ __Arguments__
 
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
 * groupName -  The group (cn) to retrieve information about. Optionally can pass in the distinguishedName (dn) of the group to retrieve.
+* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeGroupsMembership : false, includeDeleted : false };
 * callback(err, group) - The callback to execute when completed. callback(err: {Object}, group: {Group})
 
 
@@ -587,13 +596,14 @@ ad.findGroup(groupName, function(err, group) {
 ---------------------------------------
 
 <a name="findGroups" />
-### findGroups(opts, callback)
+### findGroups(opts, findOpts, callback)
 
 Perform a generic search for groups that match the specified filter. The default LDAP filter for groups is
 specified as (&(objectClass=group)(!(objectClass=computer))(!(objectClass=user))(!(objectClass=person)))
 
 __Arguments__
 * opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
+* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeGroupsMembership : false, includeDeleted : false };
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
 __Example__
