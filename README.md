@@ -123,20 +123,21 @@ var ad = new ActiveDirectory(url, baseDN, username, password, {
 
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
 
-__Entry parser__
+__Custom entry parsing __
 
-By default, the entry parser only returns the entry.object.
-if you want to manipulate the entry in a different way you can pass a custom parser.
-This is useful, for example, in case you want to change the objectSid or GUID which are binary values.
-an example of a custom parser:
+if you want to manipulate the search entry in a different way or perhaps augment the search
+result with additional data, you can pass a custom parser. This is useful, for example, in case 
+you want to change the objectSid or GUID which are binary values.
+
+Example:
+
 ```js
-var customEntryParser = function(entry, callback){
-    var item = entry.object;
-    if (entry.raw.hasOwnProperty("objectSid")){
-        item.objectSid = entry.raw.objectSid;
+function customEntryParser(entry, raw, callback){
+    if (raw.hasOwnProperty("objectSid")){
+        entry.objectSid = raw.objectSid;
     }
-    if (entry.raw.hasOwnProperty("objectGUID")){
-        item.objectGUID = entry.raw.objectGUID;
+    if (raw.hasOwnProperty("objectGUID")){
+        entry.objectGUID = raw.objectGUID;
     }
     callback(item);
 };
@@ -163,6 +164,19 @@ var ad = new ActiveDirectory(url, baseDN, username, password, {
                              });
 ```
 
+Optionally, you can specify your custom entry parser as part of the 'opts' object. See [optional parameters](#opts)
+for more information.
+
+```js
+var opts = function(entry, raw, callback) {
+  entry.retrievedAt = new Date();
+  callback(entry);
+};
+ad.findUser(opts, 'userPrincipalName=bob@domain.com', function(err, user) {
+ ...
+});
+```
+ 
 ---------------------------------------
 
 Documentation
@@ -225,7 +239,7 @@ ad.authenticate(username, password, function(err, auth) {
 Checks to see if a user is a member of the specified group. This function will also check for group membership inside of a group.  Even if a user is not explicity listed as a member of a particular group, if a group that the user is a member of belongs to the group, then this function will return true.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * username - The username to check for membership. Can be specied as a sAMAccountName, userPrincipalName or distinguishedName (dn)
 * groupName - The group to check for membership. Can be a commonName (cn) or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, result: {Boolean})
@@ -255,7 +269,7 @@ var ad.isUserMemberOf(username, groupName, function(err, isMember) {
 Checks to see if the specified group exists.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * groupName - The group to check if is defined. Can be a commonName (cn) or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, result: {Boolean})
 
@@ -283,7 +297,7 @@ ad.groupExists(groupName, function(err, exists) {
 Checks to see if the specified user exists.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * username - The username to check if it exists. Can be a sAMAccountName, userPrincipalName or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, result: {Boolean})
 
@@ -311,7 +325,7 @@ ad.userExists(username, function(err, exists) {
 For the specified group, retrieve all of the users that belong to the group. If the group contains groups, then the members of those groups are recursively retrieved as well to build a complete list of users that belong to the specified group.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * groupName - The name of the group to retrieve membership from. Can be a commonName (cn) or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[User]})
 
@@ -343,7 +357,7 @@ ad.getUsersForGroup(groupName, function(err, users) {
 For the specified username, retrieve all of the groups that a user belongs to. If a retrieved group is a member of another group, then that group is recursively retrieved as well to build a complete hierarchy of groups that a user belongs to.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * username - The name of the user to retrieve group membership for. Can be a sAMAccountName, userPrincipalName, or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
@@ -372,7 +386,7 @@ ad.getGroupMembershipForUser(sAMAccountName, function(err, groups) {
 For the specified group, retrieve all of the groups that the group is a member of. If a retrieved group is a member of another group, then that group is recursively retrieved as well to build a complete hierarchy of groups that a user belongs to.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * groupName - The name of the user to retrieve group membership for. Can be a sAMAccountName, userPrincipalName, or a distinguishedName (dn)
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
@@ -396,29 +410,27 @@ ad.getGroupMembershipForGroup(groupName, function(err, groups) {
 ---------------------------------------
 
 <a name="find" />
-### find(opts, findOpts, callback)
+### find(opts, callback)
 
 Perform a generic search for the specified LDAP query filter. This function will return both
 groups and users that match the specified filter. Any results not recognized as a user or group
 (i.e. computer accounts, etc.) can be found in the 'other' attribute / array of the result.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
-* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeGroupsMembership : false, includeDeleted : false }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts). If only a string is provided, then the string is assumed to be an LDAP filter
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
 __Example__
 
 ```js
 var query = 'cn=*Exchange*';
-var findOpts = {
-  includeUsersMembership : true,
-  includeGroupsMembership : true,
+var opts = {
+  includeMembership : [ 'group', 'user' ], // Optionally can use 'all'
   includeDeleted : false
-}
+};
 
 var ad = new ActiveDirectory(config);
-ad.find(query, findOpts, function(err, results) {
+ad.find(query, function(err, results) {
   if ((err) || (! result)) {
     console.log('ERROR: ' + JSON.stringify(err));
     return;
@@ -458,7 +470,7 @@ Note: That when an LDAP entry / object is tombstoned, not all attributes for tha
 This is a limitation of Active Directory itself and not the library itself.
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts). If only a string is provided, then the string is assumed to be an LDAP filter
 * callback - The callback to execute when completed. callback(err: {Object}, result: {Array})
 
 If the baseDN is not specified, then a RootDSE query will be performed on the attached URL and 'ou-Deleted Objects' 
@@ -485,7 +497,7 @@ ad.findDeletedObjects(opts, function(err, result) {
 ---------------------------------------
 
 <a name="findUser" />
-### findUser(opts, username, findOpts, callback)
+### findUser(opts, username, callback)
 
 Looks up or finds a username by their sAMAccountName, userPrincipalName, distinguishedName (dn) or custom filter. If found, the returned object contains all of the requested attributes. By default, the following attributes are returned:
 
@@ -493,17 +505,15 @@ Looks up or finds a username by their sAMAccountName, userPrincipalName, disting
 
 __Arguments__
 
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * username - The username to retrieve information about. Optionally can pass in the distinguishedName (dn) of the user to retrieve.
-* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeDeleted : false };
-for backward compatibility if you pass here boolean it will set the includeUsersMembership with this boolean. please don't pass a boolean in purpose.
 * callback(err, user) - The callback to execute when completed. callback(err: {Object}, user: {User})
 
 __Example__
 
 ```js
 // Any of the following username types can be searched on
-var sAMAccountName = 'username';
+var sAMAccountName = 'userna4me';
 var userPrincipalName = 'username@domain.com';
 var dn = 'CN=Smith\\, John,OU=Users,DC=domain,DC=com';
 
@@ -523,15 +533,13 @@ ad.findUser(sAMAccountName, function(err, user) {
 ---------------------------------------
 
 <a name="findUsers" />
-### findUsers(opts, findOpts, callback)
+### findUsers(opts, callback)
 
 Perform a generic search for users that match the specified filter. The default LDAP filter for users is
 specified as (&(|(objectClass=user)(objectClass=person))(!(objectClass=computer))(!(objectClass=group)))
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
-* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeUsersMembership : false, includeDeleted : false };
-for backward compatibility if you pass here boolean it will set the includeUsersMembership with this boolean. please don't pass a boolean in purpose.
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts). If only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
 * callback - The callback to execute when completed. callback(err: {Object}, users: {Array[User]})
 
 __Example__
@@ -556,7 +564,7 @@ ad.findUsers(query, true, function(err, users) {
 ---------------------------------------
 
 <a name="findGroup" />
-### findGroup(opts, groupName, findOpts, callback)
+### findGroup(opts, groupName, callback)
 
 Looks up or find a group by common name (CN) which is required to be unique in Active Directory or optionally by the distinguished name. Supports groups with range retrieval specifiers. The following attributes are returned by default for the group:
 
@@ -564,9 +572,8 @@ Looks up or find a group by common name (CN) which is required to be unique in A
 
 __Arguments__
 
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts).
 * groupName -  The group (cn) to retrieve information about. Optionally can pass in the distinguishedName (dn) of the group to retrieve.
-* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeGroupsMembership : false, includeDeleted : false };
 * callback(err, group) - The callback to execute when completed. callback(err: {Object}, group: {Group})
 
 
@@ -596,14 +603,13 @@ ad.findGroup(groupName, function(err, group) {
 ---------------------------------------
 
 <a name="findGroups" />
-### findGroups(opts, findOpts, callback)
+### findGroups(opts, callback)
 
 Perform a generic search for groups that match the specified filter. The default LDAP filter for groups is
 specified as (&(objectClass=group)(!(objectClass=computer))(!(objectClass=user))(!(objectClass=person)))
 
 __Arguments__
-* opts - Optional LDAP query string parameters to execute. { scope: '', filter: '', attributes: [ '', '', ... ], sizeLimit: 0, timelimit: 0 }. Optionally, if only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
-* findOpts - Optional, special find options like includeMembership and includeDeleted . Default are :  {includeGroupsMembership : false, includeDeleted : false };
+* opts - Optional parameters to extend or override functionality. See [optional parameters](#opts). If only a string is provided, then the string is assumed to be an LDAP filter that will be appended as the last parameter in the default LDAP filter.
 * callback - The callback to execute when completed. callback(err: {Object}, groups: {Array[Group]})
 
 __Example__
@@ -655,6 +661,59 @@ var ad = new ActiveDirectory(config);
 ad.getRootDSE(function(err, result) {
   //...
 });
+```
+
+---------------------------------------
+
+<a name="opts" />
+### Optional Parameters / Extended Functionality
+
+Any method which takes an 'opts' parameter allows for additional options. Options for both activedirectory.js
+and the internal ldapjs client are supported. 
+ 
+Currently supported ldapjs opts are:
+
+* url - a valid LDAP url.
+* host - the host name to connect to (used with port in lieu of url)
+* port - the port to connect to (used with hostname in lieu of url)
+* secure - indicates if ldaps:// vs ldap:// is used. (used with hostname/port in lieu of url)
+* tlsOptions - additrional tls options (see ldapjs for more information)
+* socketPath - If you're running an LDAP server over a Unix Domain Socket, use this.
+* log - You can optionally pass in a bunyan instance the client will use to acquire a logger. The client logs all messages at the trace level.
+* timeout - How long the client should let operations live for before timing out. Default is Infinity.
+* idleTimeout - How long the client should wait before timing out on TCP connections. Default is up to the OS.
+* bindDN - The DN all connections should be bound as.
+* bindCredentials - The credentials to use with bindDN.
+* scope	- One of base, one, or sub. Defaults to base.
+* filter - A string version of an LDAP filter (see below), or a programatically constructed Filter object. Defaults to (objectclass=*).
+* attributes - attributes to select and return (if these are set, the server will return only these attributes). Defaults to the empty set, which means all attributes.
+* sizeLimit - the maximum number of entries to return. Defaults to 0 (unlimited).
+* timeLimit - the maximum amount of time the server should take in responding, in seconds. Defaults to 10. Lots of servers will ignore this.
+
+Options for activedirectory.js:
+
+* baseDN - The alternative baseDN to use than the one specified in the ctor.
+* includeMembership - Indicates that a search or find operation should enumerate the group memberships of the specified result types. Supported values are [ 'user', 'group', 'all' ].
+* includeDeleted - Indicates that results should include tombstoned / deleted items. Please see [findDeletedObject](#findDeletedObjects) for additional notes and caveats.
+* entryParser - Allows for a custom function to be specified for parsing of the resulting ldap object. Examples include augmenting ldap data with external data from an RDBMs. function onParse(entry, raw, callback) { callback(entry); } If null is returned, the result is excluded.
+
+#### Example
+
+```js
+var opts = {
+  scope: 'sub',
+  filter: 'objectClass=User',
+  includeMembership: [ 'user' ],
+  entryParser: function(entry, raw, callback) {
+    // returning null with exclude result
+    if (entry.ignore) return(null);
+
+    entry.retrievedAt = new Date();
+    entry.preferredServer = getPreferredServerFromDatabase(entry.userPrincipalName);
+
+    callback(entry);  
+  }
+};
 ```
 
   [underscore]: http://underscorejs.org/
