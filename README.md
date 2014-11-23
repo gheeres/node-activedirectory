@@ -139,7 +139,7 @@ function customEntryParser(entry, raw, callback){
     if (raw.hasOwnProperty("objectGUID")){
         entry.objectGUID = raw.objectGUID;
     }
-    callback(item);
+    callback(entry);
 };
 ```
 
