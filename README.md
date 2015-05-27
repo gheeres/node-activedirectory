@@ -39,10 +39,11 @@ Optionally the configuration can be specified with an object:
 
 ```js
 var ActiveDirectory = require('activedirectory');
-var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
-                               baseDN: 'dc=domain,dc=com',
-                               username: 'username@domain.com',
-                               password: 'password' });
+var config = { url: 'ldap://dc.domain.com',
+               baseDN: 'dc=domain,dc=com',
+               username: 'username@domain.com',
+               password: 'password' }
+var ad = new ActiveDirectory(config);
 ```
 
 The username and password specified in the configuration are what are used for user and group lookup operations.
@@ -423,6 +424,7 @@ __Arguments__
 __Example__
 
 ```js
+var _ = require('underscore');
 var query = 'cn=*Exchange*';
 var opts = {
   includeMembership : [ 'group', 'user' ], // Optionally can use 'all'
@@ -431,23 +433,23 @@ var opts = {
 
 var ad = new ActiveDirectory(config);
 ad.find(query, function(err, results) {
-  if ((err) || (! result)) {
+  if ((err) || (! results)) {
     console.log('ERROR: ' + JSON.stringify(err));
     return;
   }
 
   console.log('Groups');
-  _.each(result.groups, function(group) {
+  _.each(results.groups, function(group) {
     console.log('  ' + group.cn);
   });
 
   console.log('Users');
-  _.each(result.users, function(user) {
+  _.each(results.users, function(user) {
     console.log('  ' + user.cn);
   });
 
   console.log('Other');
-  _.each(result.other, function(other) {
+  _.each(results.other, function(other) {
     console.log('  ' + other.cn);
   });
 });
