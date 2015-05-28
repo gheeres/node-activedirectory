@@ -11,6 +11,13 @@ describe('ActiveDirectory', function() {
      ad = new ActiveDirectory(config);
     });
 
+    it('should return true if the username (distinguishedName) and password are correct', function(done) {
+      ad.authenticate(settings.username.dn, settings.password, function(err, auth) {
+        if (err) return(done(err));
+        assert(auth);
+        done();
+      });
+    });
     it('should return true if the username (userPrincipalName) and password are correct', function(done) {
       ad.authenticate(settings.username.userPrincipalName, settings.password, function(err, auth) {
         if (err) return(done(err));
