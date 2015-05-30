@@ -58,7 +58,8 @@ describe('ActiveDirectory', function() {
         'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
         'comment', 'description' 
       ];
-      ad.getUsersForGroup(settings.groups[0].dn, function(err, users) {
+      var group = settings.groups[0];
+      ad.getUsersForGroup(group.dn, function(err, users) {
         if (err) return(done(err));
         assert(users);
         (users || []).forEach(function(user) {
@@ -74,10 +75,11 @@ describe('ActiveDirectory', function() {
       var opts = {
         attributes: [ 'createTimeStamp' ]
       };
-      ad.getUsersForGroup(opts, settings.groups[0].dn, function(err, users) {
+      var group = settings.groups[0];
+      ad.getUsersForGroup(opts, group.dn, function(err, users) {
         if (err) return(done(err));
         assert(users);
-        assert.equal((settings.groups[0].users || []).length, (users || []).length);
+        assert.equal((group.users || []).length, (users || []).length);
         (users || []).forEach(function(user) {
           var keys = _.keys(user) || [];
           assert(keys.length <= opts.attributes.length);
