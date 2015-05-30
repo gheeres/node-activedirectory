@@ -13,6 +13,7 @@ describe('ActiveDirectory', function() {
 
   describe('#getGroupMembershipForUser()', function() {
     it('should return groups if username (distinguishedName) is valid', function(done) {
+      var verified = 0;
       settings.users.forEach(function(user) {
         ad.getGroupMembershipForUser(user.dn, function(err, groups) {
           if (err) return(done(err));
@@ -24,11 +25,12 @@ describe('ActiveDirectory', function() {
               return((result.cn || '').toLowerCase()=== lowerCaseSource);
             }));
           });
+          if (++verified === settings.users.length) done();
         });
       });
-      done();
     });
     it('should return groups if username (sAMAccountName) exists', function(done) {
+      var verified = 0;
       settings.users.forEach(function(user) {
         ad.getGroupMembershipForUser(user.sAMAccountName, function(err, groups) {
           if (err) return(done(err));
@@ -40,11 +42,12 @@ describe('ActiveDirectory', function() {
               return((result.cn || '').toLowerCase()=== lowerCaseSource);
             }));
           });
+          if (++verified === settings.users.length) done();
         });
       });
-      done();
     });
     it('should return groups if username (userPrincipalName) exists', function(done) {
+      var verified = 0;
       settings.users.forEach(function(user) {
         ad.getGroupMembershipForUser(user.userPrincipalName, function(err, groups) {
           if (err) return(done(err));
@@ -56,9 +59,9 @@ describe('ActiveDirectory', function() {
               return((result.cn || '').toLowerCase()=== lowerCaseSource);
             }));
           });
+          if (++verified === settings.users.length) done();
         });
       });
-      done();
     });
     it('should return empty groups if groupName doesn\'t exist', function(done) {
       ad.getGroupMembershipForUser('!!!NON-EXISTENT GROUP!!!', function(err, groups) {

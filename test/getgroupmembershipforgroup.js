@@ -13,6 +13,7 @@ describe('ActiveDirectory', function() {
 
   describe('#getGroupMembershipForGroup()', function() {
     it('should return groups if groupName (distinguishedName) is valid', function(done) {
+      var verified = 0;
       settings.groups.forEach(function(group) {
         ad.getGroupMembershipForGroup(group.dn, function(err, groups) {
           if (err) return(done(err));
@@ -24,11 +25,12 @@ describe('ActiveDirectory', function() {
               return((result.cn || '').toLowerCase()=== lowerCaseSource);
             }));
           });
+          if (++verified === settings.groups.length) done();
         });
       });
-      done();
     });
     it('should return groups if groupName (commonName) exists', function(done) {
+      var verified = 0;
       settings.groups.forEach(function(group) {
         ad.getGroupMembershipForGroup(group.cn, function(err, groups) {
           if (err) return(done(err));
@@ -40,9 +42,9 @@ describe('ActiveDirectory', function() {
               return((result.cn || '').toLowerCase()=== lowerCaseSource);
             }));
           });
+          if (++verified === settings.groups.length) done();
         });
       });
-      done();
     });
     it('should return empty groups if groupName doesn\'t exist', function(done) {
       ad.getGroupMembershipForGroup('!!!NON-EXISTENT GROUP!!!', function(err, groups) {
