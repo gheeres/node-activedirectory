@@ -12,54 +12,21 @@ describe('ActiveDirectory', function() {
   });
 
   describe('#getGroupMembershipForUser()', function() {
-    it('should return groups if username (distinguishedName) is valid', function(done) {
-      var verified = 0;
-      settings.users.forEach(function(user) {
-        ad.getGroupMembershipForUser(user.dn, function(err, groups) {
-          if (err) return(done(err));
-          assert.equal((user.members || []).length, (groups || []).length);
-          // Validate membership equality
-          (users.members || []).forEach(function(source) {
-            var lowerCaseSource = (source || '').toLowerCase();
-            assert(_.any(groups, function(result) {
-              return((result.cn || '').toLowerCase()=== lowerCaseSource);
-            }));
+    settings.users.forEach(function(user) {
+      ['dn', 'userPrincipalName', 'sAMAccountName'].forEach(function(usernameAttribute) {
+        it('should return ' + (user.members || []).length + ' groups for (' + usernameAttribute + ') ' + user[usernameAttribute], function(done) {
+          ad.getGroupMembershipForUser(user[usernameAttribute], function(err, groups) {
+            if (err) return(done(err));
+            assert.equal((user.members || []).length, (groups || []).length);
+
+            (user.members || []).forEach(function(source) {
+              var lowerCaseSource = (source || '').toLowerCase();
+              assert(_.any(groups, function(result) {
+                return((result.cn || '').toLowerCase()=== lowerCaseSource);
+              }));
+            });
+            done();
           });
-          if (++verified === settings.users.length) done();
-        });
-      });
-    });
-    it('should return groups if username (sAMAccountName) exists', function(done) {
-      var verified = 0;
-      settings.users.forEach(function(user) {
-        ad.getGroupMembershipForUser(user.sAMAccountName, function(err, groups) {
-          if (err) return(done(err));
-          assert.equal((user.members || []).length, (groups || []).length);
-          // Validate membership equality
-          (user.members || []).forEach(function(source) {
-            var lowerCaseSource = (source || '').toLowerCase();
-            assert(_.any(groups, function(result) {
-              return((result.cn || '').toLowerCase()=== lowerCaseSource);
-            }));
-          });
-          if (++verified === settings.users.length) done();
-        });
-      });
-    });
-    it('should return groups if username (userPrincipalName) exists', function(done) {
-      var verified = 0;
-      settings.users.forEach(function(user) {
-        ad.getGroupMembershipForUser(user.userPrincipalName, function(err, groups) {
-          if (err) return(done(err));
-          assert.equal((user.members || []).length, (groups || []).length);
-          // Validate membership equality
-          (user.members || []).forEach(function(source) {
-            var lowerCaseSource = (source || '').toLowerCase();
-            assert(_.any(groups, function(result) {
-              return((result.cn || '').toLowerCase()=== lowerCaseSource);
-            }));
-          });
-          if (++verified === settings.users.length) done();
         });
       });
     });
@@ -72,7 +39,8 @@ describe('ActiveDirectory', function() {
     });
     it('should return default group attributes when not specified', function(done) {
       var defaultAttributes = [ 'objectCategory', 'distinguishedName', 'cn', 'description' ];
-      ad.getGroupMembershipForUser(settings.users[0].userPrincipalName, function(err, groups) {
+      var user = settings.users[0];
+      ad.getGroupMembershipForUser(user.userPrincipalName, function(err, groups) {
         if (err) return(done(err));
         assert(groups);
         (groups || []).forEach(function(group) {
@@ -88,10 +56,11 @@ describe('ActiveDirectory', function() {
       var opts = {
         attributes: [ 'createTimeStamp' ]
       };
-      ad.getGroupMembershipForUser(opts, settings.users[0].userPrincipalName, function(err, groups) {
+      var user = settings.users[0];
+      ad.getGroupMembershipForUser(opts, user.userPrincipalName, function(err, groups) {
         if (err) return(done(err));
         assert(groups);
-        assert.equal((settings.users[0].members || []).length, (groups || []).length);
+        assert.equal((user.members || []).length, (groups || []).length);
         (groups || []).forEach(function(group) {
           var keys = _.keys(group) || [];
           assert(keys.length <= opts.attributes.length);
