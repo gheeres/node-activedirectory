@@ -124,7 +124,7 @@ var ad = new ActiveDirectory(url, baseDN, username, password, {
 
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
 
-__Custom entry parsing __
+__Custom entry parsing__
 
 if you want to manipulate the search entry in a different way or perhaps augment the search
 result with additional data, you can pass a custom parser. This is useful, for example, in case 
