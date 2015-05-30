@@ -41,115 +41,6 @@ var ad = new ActiveDirectory(config);
 
 The username and password specified in the configuration are what are used for user and group lookup operations.
 
-__Attributes__
-
-By default, the following attributes are returned for users and groups:
-
-* user - userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
-* group - objectCategory, distinguishedName, cn, description, member
-
-If you need to override those defaults, then you can override them when you create your ActiveDirectory instance:
-
-```js
-var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
-                               baseDN: 'dc=domain,dc=com',
-                               username: 'username@domain.com',
-                               password: 'password',
-                               attributes: {
-                                 user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
-                                 group: [ 'anotherCustomAttribute', 'objectCategory' ]
-                               }
-                              });
-```
-
-If overriding the 'user' or 'group' attribute, you must specify ALL of the attributes you want. The existing defaults
-will be overridden. Optionally, you can override the attributes on a per call basis using the 'opts' parameter.
-
-__Referrals__
-
-By default, referral chasing is disabled. To enable it, specify a referrals attribute when you create your instance.
-The referrals object has the following syntax:
-
-```js
-{
-  referrals: {
-    enabled: false,
-    excluded: [
-      'ldaps?://ForestDnsZones\./.*',
-      'ldaps?://DomainDnsZones\./.*',
-      'ldaps?://.*/CN=Configuration,.*'
-    ]
-  }
-}
-```
-
-The 'excluded' options is a list of regular expression filters to ignore specific referrals. The default exclusion list
-is included above, ignoring the special partitions that ActiveDirectory creates by default. To specify these options,
-override them as follows:
-
-```js
-var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
-                               baseDN: 'dc=domain,dc=com',
-                               username: 'username@domain.com',
-                               password: 'password',
-                               attributes: { ... },
-                               referrals: {
-                                 enabled: true,
-                                 excluded: [ ]
-                               }
-                              });
-```
-
-If you enable referral chasing, the specified username MUST be a userPrincipalName.
-
-__Custom entry parsing__
-
-if you want to manipulate the search entry in a different way or perhaps augment the search
-result with additional data, you can pass a custom parser. This is useful, for example, in case 
-you want to change the objectSid or GUID which are binary values.
-
-Example:
-
-```js
-function customEntryParser(entry, raw, callback){
-    if (raw.hasOwnProperty("objectSid")){
-        entry.objectSid = raw.objectSid;
-    }
-    if (raw.hasOwnProperty("objectGUID")){
-        entry.objectGUID = raw.objectGUID;
-    }
-    callback(entry);
-};
-```
-
-If you want to specify your own parser you can override the default parser as follows:
-
-```js
-var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
-                               baseDN: 'dc=domain,dc=com',
-                               username: 'username@domain.com',
-                               password: 'password',
-                               attributes: { ... },
-                               referrals: { ... },
-                               entryParser : customEntryParser
-                              });
-```
-
-Optionally, you can specify your custom entry parser as part of the 'opts' object. See [optional parameters](#opts)
-for more information.
-
-```js
-var opts = function(entry, raw, callback) {
-  entry.retrievedAt = new Date();
-  callback(entry);
-};
-ad.findUser(opts, 'userPrincipalName=bob@domain.com', function(err, user) {
- ...
-});
-```
- 
----------------------------------------
-
 Documentation
 --------------
 * [authenticate](#authenticate)
@@ -636,7 +527,115 @@ ad.getRootDSE(function(err, result) {
 ```
 
 ---------------------------------------
+## Advanced Usage
 
+### Attributes
+
+By default, the following attributes are returned for users and groups:
+
+* user - distinguishedName, userPrincipalName, sAMAccountName, mail, lockoutTime, whenCreated, pwdLastSet, userAccountControl, employeeID,  sn,  givenName, initials, cn, displayName, comment, description
+* group - distinguishedName, objectCategory, cn, description
+
+If you need to override those defaults, then you can override them when you create your ActiveDirectory instance:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: {
+                                 user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
+                                 group: [ 'anotherCustomAttribute', 'objectCategory' ]
+                               }
+                              });
+```
+
+If overriding the 'user' or 'group' attribute, you must specify ALL of the attributes you want. The existing defaults
+will be overridden. Optionally, you can override the attributes on a per call basis using the 'opts' parameter.
+
+### Referrals
+
+By default, referral chasing is disabled. To enable it, specify a referrals attribute when you create your instance.
+The referrals object has the following syntax:
+
+```js
+{
+  referrals: {
+    enabled: false,
+    excluded: [
+      'ldaps?://ForestDnsZones\./.*',
+      'ldaps?://DomainDnsZones\./.*',
+      'ldaps?://.*/CN=Configuration,.*'
+    ]
+  }
+}
+```
+
+The 'excluded' options is a list of regular expression filters to ignore specific referrals. The default exclusion list
+is included above, ignoring the special partitions that ActiveDirectory creates by default. To specify these options,
+override them as follows:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: { ... },
+                               referrals: {
+                                 enabled: true,
+                                 excluded: [ ]
+                               }
+                              });
+```
+
+If you enable referral chasing, the specified username MUST be a userPrincipalName.
+
+### Custom Entry Parsing
+
+if you want to manipulate the search entry in a different way or perhaps augment the search
+result with additional data, you can pass a custom parser. This is useful, for example, in case 
+you want to change the objectSid or GUID which are binary values.
+
+Example:
+
+```js
+function customEntryParser(entry, raw, callback){
+    if (raw.hasOwnProperty("objectSid")){
+        entry.objectSid = raw.objectSid;
+    }
+    if (raw.hasOwnProperty("objectGUID")){
+        entry.objectGUID = raw.objectGUID;
+    }
+    callback(entry);
+};
+```
+
+If you want to specify your own parser you can override the default parser as follows:
+
+```js
+var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
+                               baseDN: 'dc=domain,dc=com',
+                               username: 'username@domain.com',
+                               password: 'password',
+                               attributes: { ... },
+                               referrals: { ... },
+                               entryParser : customEntryParser
+                              });
+```
+
+Optionally, you can specify your custom entry parser as part of the 'opts' object. See [optional parameters](#opts)
+for more information.
+
+```js
+var opts = function(entry, raw, callback) {
+  entry.retrievedAt = new Date();
+  callback(entry);
+};
+ad.findUser(opts, 'userPrincipalName=bob@domain.com', function(err, user) {
+ ...
+});
+```
+ 
 <a name="opts" />
 ### Optional Parameters / Extended Functionality
 
@@ -687,6 +686,8 @@ var opts = {
   }
 };
 ```
+
+------------------------------------------------
 
   [underscore]: http://underscorejs.org/
   [async]: https://github.com/caolan/async
