@@ -3,14 +3,14 @@ var ActiveDirectory = require('../index');
 var config = require('./config');
 
 describe('ActiveDirectory', function() {
+  var ad;
+  var settings = require('./settings').groupExists;
+
+  before(function() {
+   ad = new ActiveDirectory(config);
+  });
+
   describe('#groupExists()', function() {
-    var ad;
-    var settings = require('./settings').groupExists;
-
-    beforeEach(function() {
-     ad = new ActiveDirectory(config);
-    });
-
     it('should return true if the groupName (commonName) exists', function(done) {
       ad.groupExists(settings.sAMAccountName, settings.groupName.cn, function(err, exists) {
         if (err) return(done(err));

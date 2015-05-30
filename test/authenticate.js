@@ -3,14 +3,14 @@ var ActiveDirectory = require('../index');
 var config = require('./config');
 
 describe('ActiveDirectory', function() {
+  var ad;
+  var settings = require('./settings').authenticate;
+
+  before(function() {
+   ad = new ActiveDirectory(config);
+  });
+
   describe('#authenticate()', function() {
-    var ad;
-    var settings = require('./settings').authenticate;
-
-    beforeEach(function() {
-     ad = new ActiveDirectory(config);
-    });
-
     it('should return true if the username (distinguishedName) and password are correct', function(done) {
       ad.authenticate(settings.username.dn, settings.password, function(err, auth) {
         if (err) return(done(err));
