@@ -32,13 +32,6 @@ Usage
 
 ```js
 var ActiveDirectory = require('activedirectory');
-var ad = new ActiveDirectory(url, baseDN, username, password);
-```
-
-Optionally the configuration can be specified with an object:
-
-```js
-var ActiveDirectory = require('activedirectory');
 var config = { url: 'ldap://dc.domain.com',
                baseDN: 'dc=domain,dc=com',
                username: 'username@domain.com',
@@ -67,14 +60,6 @@ var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
                                  group: [ 'anotherCustomAttribute', 'objectCategory' ]
                                }
                               });
-```
-or
-```js
-var ad = new ActiveDirectory(url, baseDN, username, password, {
-                             attributes: {
-                               user: [ 'myCustomAttribute', 'mail', 'userPrinicipalName' ],
-                               group: [ 'anotherCustomAttribute', 'objectCategory' ] }
-                             });
 ```
 
 If overriding the 'user' or 'group' attribute, you must specify ALL of the attributes you want. The existing defaults
@@ -114,13 +99,6 @@ var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
                                }
                               });
 ```
-or
-```js
-var ad = new ActiveDirectory(url, baseDN, username, password, {
-                             attributes: { ... },
-                             referrals: { enabled: true }
-                             });
-```
 
 If you enable referral chasing, the specified username MUST be a userPrincipalName.
 
@@ -155,14 +133,6 @@ var ad = new ActiveDirectory({ url: 'ldap://dc.domain.com',
                                referrals: { ... },
                                entryParser : customEntryParser
                               });
-```
-or
-```js
-var ad = new ActiveDirectory(url, baseDN, username, password, {
-                             attributes: { ... },
-                             referrals: { ... },
-                             entryParser : customEntryParser
-                             });
 ```
 
 Optionally, you can specify your custom entry parser as part of the 'opts' object. See [optional parameters](#opts)
