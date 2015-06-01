@@ -29,7 +29,7 @@ describe('ActiveDirectory', function() {
       done();
     });
     it('should replace default user attributes if specified', function(done) {
-      var ad = new ActiveDirectory(_.extend(config, {
+      var ad = new ActiveDirectory(_.extend({}, config, {
         attributes: {
           user: [ 'mycustomuserattribute' ]
         }
@@ -40,7 +40,7 @@ describe('ActiveDirectory', function() {
       done();
     });
     it('should replace default group attributes if specified', function(done) {
-      var ad = new ActiveDirectory(_.extend(config, {
+      var ad = new ActiveDirectory(_.extend({}, config, {
         attributes: {
           group: [ 'mycustomgroupattribute' ]
         }
