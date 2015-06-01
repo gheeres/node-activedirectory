@@ -27,5 +27,8 @@
     "type": "git",
     "url": "https://github.com/gheeres/node-activedirectory.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "^2.2.5"
+  }
 }
