@@ -75,7 +75,7 @@ __Example__
 
 ```js
 var ad = new ActiveDirectory(config);
-var username = 'john.smith';
+var username = 'john.smith@domain.com';
 var password = 'password';
 
 ad.authenticate(username, password, function(err, auth) {
@@ -166,7 +166,7 @@ __Arguments__
 __Example__
 
 ```js
-var username = 'john.smith';
+var username = 'john.smith@domain.com';
 
 var ad = new ActiveDirectory(config);
 ad.userExists(username, function(err, exists) {
@@ -226,7 +226,7 @@ __Arguments__
 __Example__
 
 ```js
-var sAMAccountName = 'john.smith';
+var sAMAccountName = 'john.smith@domain.com';
 
 var ad = new ActiveDirectory(config);
 ad.getGroupMembershipForUser(sAMAccountName, function(err, groups) {
@@ -376,7 +376,7 @@ __Example__
 
 ```js
 // Any of the following username types can be searched on
-var sAMAccountName = 'userna4me';
+var sAMAccountName = 'username';
 var userPrincipalName = 'username@domain.com';
 var dn = 'CN=Smith\\, John,OU=Users,DC=domain,DC=com';
 
