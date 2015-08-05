@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var assert = require('assert');
+var assert = require('./assert.more');
 var ActiveDirectory = require('../index');
 var config = require('./config');
 
@@ -17,14 +17,8 @@ describe('ActiveDirectory', function() {
         it('should return ' + (group.members || []).length + ' groups for (' + groupAttribute + ') ' + group[groupAttribute], function(done) {
           ad.getGroupMembershipForGroup(group[groupAttribute], function(err, groups) {
             if (err) return(done(err));
-            assert.equal((group.members || []).length, (groups || []).length);
-  
-            (groups.members || []).forEach(function(source) {
-              var lowerCaseSource = (source || '').toLowerCase();
-              assert(_.any(groups, function(result) {
-                return((result.cn || '').toLowerCase()=== lowerCaseSource);
-              }));
-            });
+
+            assert.equalDifference(group.members || [], groups || []);
             done();
           });
         });

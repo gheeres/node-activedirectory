@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = require('./assert.more');
 var _ = require('underscore');
 var ActiveDirectory = require('../index');
 var config = require('./config');
@@ -46,7 +46,7 @@ describe('ActiveDirectory', function() {
       });
     });
   });
-  
+
   describe('#findGroup(opts)', function() {
     it('should use the custom opts.filter if provided', function(done) {
       var opts = {
@@ -55,6 +55,7 @@ describe('ActiveDirectory', function() {
       ad.findGroup(opts, settings.groupName.dn, function(err, user) {
         if (err) return(done(err));
         assert(user);
+
         assert((settings.groupName.dn || '').toLowerCase() !== (user.dn || '').toLowerCase());
         done();
       });
@@ -66,7 +67,8 @@ describe('ActiveDirectory', function() {
       ad.findGroup(opts, settings.groupName.dn, function(err, user) {
         if (err) return(done(err));
         assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
+
+        assert.equalDifference(settings.groups || [], user.groups || []);
         done();
       });
     });
@@ -77,7 +79,8 @@ describe('ActiveDirectory', function() {
       ad.findGroup(opts, settings.groupName.dn, function(err, user) {
         if (err) return(done(err));
         assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
+
+        assert.equalDifference(settings.groups || [], user.groups || []);
         done();
       });
     });
@@ -88,13 +91,8 @@ describe('ActiveDirectory', function() {
       ad.findGroup(opts, settings.groupName.dn, function(err, user) {
         if (err) return(done(err));
         assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
-        (user.groups || []).forEach(function(group) {
-          var lowercaseGroup = (group.cn || '').toLowerCase();
-          assert(_.any(settings.groups || [], function(expectedGroup) {
-            return(lowercaseGroup === expectedGroup.toLowerCase());
-          }));
-        });
+
+        assert.equalDifference(settings.groups || [], user.groups || []);
         done();
       });
     });
@@ -105,6 +103,7 @@ describe('ActiveDirectory', function() {
       ad.findGroup(opts, '' /* ignored since we're setting our own filter */, function(err, user) {
         if (err) return(done(err));
         assert(user);
+
         assert(! _.isArray(user));
         done();
       });

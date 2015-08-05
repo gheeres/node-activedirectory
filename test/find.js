@@ -28,12 +28,15 @@ describe('ActiveDirectory', function() {
             var expectedResults = ((query.results || [])[key] || []);
             var actualResults = ((results || [])[key] || []);
 
-            assert.equal(expectedResults.length, actualResults.length);
+            assert.equal(expectedResults.length, actualResults.length,
+                         'Only ' + actualResults.length + ' ' + key + ' retrieved. ' +
+                         'Expected: ' + JSON.stringify(expectedResults) + '; ' +
+                         'Actual: ' + JSON.stringify(_.map(actualResults || [], function(item) { return(item.cn); })));
             (expectedResults || []).forEach(function(expectedResult) {
               var lowerCaseExpectedResult = (expectedResult || '').toLowerCase();
               assert(_.any(actualResults || [], function(result) {
                 return(lowerCaseExpectedResult === (result.cn || '').toLowerCase());
-              }));
+              }), 'Expected ' + key + ' result ' + expectedResult + ' not found in list of results: ' + JSON.stringify(actualResults));
             });
           });
           done();
