@@ -50,6 +50,17 @@ describe('ActiveDirectory', function() {
       assert((defaultAttributes.user || []).length > 0);
       done();
     });
+    it('should throw an InvalidCredentialsError exception if the username/password are incorrect.', function(done) {
+      var ad = new ActiveDirectory(_.extend({}, config, {
+        password: 'TheWrongPassword!',
+        username: 'AnInvalidUsername',
+      }));
+      ad.findUser('unknown', function(err, user) {
+        assert.notEqual(null, err);
+        assert.equal(err.name, 'InvalidCredentialsError');
+        done();
+      });
+    });
   });
 });
 
