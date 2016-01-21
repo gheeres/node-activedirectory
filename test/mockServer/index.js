@@ -187,6 +187,7 @@ Server.prototype._mount = function (op, name, argv) {
 
 function initServer(cb) {
   require('./authentication')(server, settings);
+  require('./search')(server,  settings);
 
   server.listen(1389, '127.0.0.1', function(){
     console.log('server running: %s', server.url);
