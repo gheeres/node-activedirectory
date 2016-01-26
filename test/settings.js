@@ -57,7 +57,7 @@ module.exports = {
   // Test settings for getGroupMembershipForUser
   getGroupMembershipForUser: {
     users: [ { 
-      dn: 'First Last Name,OU=Domain Users,DC=domain,DC=com',
+      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
       sAMAccountName: 'username',
       userPrincipalName: 'username@domain.com',
       // The list of groups (commonName) that this user is a member of.
