@@ -53,6 +53,11 @@ module.exports = function search(server, settings) {
       return res.end();
     }
 
+    if (filter.indexOf('*') !== -1) {
+      // not handling wildcard queries yet
+      return res.end();
+    }
+
     // find a user
     if (/^.&.objectcategory=user.*(samaccountname|useprincipalname)/i.test(filter)) {
       let username = /(?:((?:\(samaccountname=.*\))|(?:\(userprincipalname=.*\))))/i
@@ -67,21 +72,52 @@ module.exports = function search(server, settings) {
       return;
     }
 
+    // find user by distinguishedName
+    if (/^.&.*objectcategory=user.*(distinguishedname)/i.test(filter)) {
+      let usernames = /distinguishedname=(cn=.*)\)+/i.exec(filter)[1];
+      if (usernames.indexOf(')(') !== -1) {
+        // querying multiple users at once
+        usernames = usernames.split(')(');
+        usernames = usernames.map((u) => {
+          const r = u.replace(/distinguishedname=/gi, '');
+          return r.replace(/\)/g, '');
+        })
+      } else {
+        // just a single user
+        usernames = [usernames.replace(/\)/g, '')];
+      }
+      usernames.forEach((u) => {
+        const user = schema.getByRDN(u);
+        if (user) {
+          res.send(user);
+        }
+      });
+      /*const user = schema.getByRDN(username.replace(/\)/g, ''));
+      res.send(user);*/
+      res.end();
+      return;
+    }
+
     // query for a user's group membership
     if (/^.member=cn=.*,(\s*)?ou=domain (users|admins),(\s*)?dc=domain/i.test(filter)) {
       const groups =
         schema.getByRDN(filter.replace(/member=/g, '')).attributes.memberOf;
-      sendGroups(groups);
+      if (groups) {
+        sendGroups(groups);
+      }
       res.end();
       return
     }
 
-    // check for group existence
+    // retrieve a group
     if (/^.*objectcategory=group..cn=/i.test(filter) ||
       /^.*objectcategory=group..distinguishedname=cn=/i.test(filter))
     {
-      const group = /cn=([\w\s]+)/i.exec(filter)[1];
-      res.send(schema.com.domain['domain groups'][group.toLowerCase()].value);
+      const groupName = /cn=([\w\s]+)/i.exec(filter)[1];
+      const group = schema.getGroup(groupName);
+      if (group) {
+        res.send(group);
+      }
       res.end();
       return;
     }
@@ -95,7 +131,6 @@ module.exports = function search(server, settings) {
       const keys = Object.keys(schema.com.domain['domain groups']);
       for (let k of keys) {
         const g = schema.com.domain['domain groups'][k];
-      //schema.com.domain['domain groups'].forEach((g) => {
         if (!g.hasOwnProperty('type')) {
           continue;
         }

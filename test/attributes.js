@@ -11,7 +11,7 @@ describe('Attributes', function() {
   const settings = require('./settings').findUser;
 
   const defaultAttributes = [
-    'dn',
+    'dn', 'distinguishedName',
     'userPrincipalName', 'sAMAccountName', 'mail',
     'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
     'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
