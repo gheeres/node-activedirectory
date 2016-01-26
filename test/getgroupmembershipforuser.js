@@ -26,10 +26,15 @@ describe('getGroupMembershipForUser Method', function() {
         it(`should return ${len} groups for ${attr}`, function(done) {
           ad.getGroupMembershipForUser(user[attr], function(err, groups) {
             expect(err).to.be.null;
-            expect(groups.length).to.equal(user.members.length);
-            groups.forEach((g) => {
-              expect(user.members).to.contain(g.cn);
+            expect(groups.length).to.gte(user.members.length);
+
+            const groupNames = groups.map((g) => {
+              return g.cn
             });
+            user.members.forEach((g) => {
+              expect(groupNames).to.contain(g);
+            });
+
             done();
           });
         });
@@ -74,7 +79,7 @@ describe('getGroupMembershipForUser Method', function() {
       ad.getGroupMembershipForUser(opts, user.userPrincipalName, function(err, groups) {
         expect(err).to.be.null;
         expect(groups).to.not.be.undefined;
-        expect(groups.length).to.equal(user.members.length);
+        expect(groups.length).to.gte(user.members.length);
 
         groups.forEach((g) => {
           const keys = Object.keys(g);

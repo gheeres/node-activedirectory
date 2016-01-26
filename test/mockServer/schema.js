@@ -18,7 +18,8 @@ schema.com.domain['domain groups'] = {
   type: 'ou'
 };
 [
-  'Authors', 'Domain Admins', 'My Users', 'VPN Users', 'Web Administrator'
+  'Authors', 'Domain Admins', 'My Nested Users',
+  'My Users', 'VPN Users', 'Web Administrator'
 ].forEach((n) => {
   schema.com.domain['domain groups'][n.toLowerCase()] = {
     type: 'cn',
@@ -35,6 +36,11 @@ schema.com.domain['domain groups'] = {
     }
   }
 });
+
+schema.com.domain['domain groups']['my nested users']
+  .value.attributes.memberOf = [
+    schema.com.domain['domain groups']['my users'].value
+  ];
 
 // Users
 function createUserObject(firstName, lastName, initials, username, ou, groups) {

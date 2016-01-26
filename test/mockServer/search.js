@@ -88,11 +88,30 @@ module.exports = function search(server, settings) {
 
     // query for sub groups
     if (/^.member=cn.*,(\s*)?ou=domain groups,(\s*)?dc=domain/i.test(filter)) {
-      /*const group = /^.member=cn=(.*),(\s+)?ou=domain groups/i.exec(filter)[1];
-      const members = [];*/
+      const parentGroup = schema.getByRDN(filter.replace(/member=/g, ''));
+      const cn = parentGroup.attributes.cn.toLowerCase().replace(/\s/g, '');
 
-      // not implemented
+      let groups;
+      const keys = Object.keys(schema.com.domain['domain groups']);
+      for (let k of keys) {
+        const g = schema.com.domain['domain groups'][k];
+      //schema.com.domain['domain groups'].forEach((g) => {
+        if (!g.hasOwnProperty('type')) {
+          continue;
+        }
+        if (!g.value.attributes.hasOwnProperty('memberOf')) {
+          continue;
+        }
+        g.value.attributes.memberOf.forEach((sg) => {
+          if (sg.attributes.cn.toLowerCase().replace(/\s/g, '') === cn) {
+            groups = (!groups) ? [g.value] : [].concat(groups, [g.value]);
+          }
+        });
+      }
 
+      if (groups) {
+        sendGroups(groups);
+      }
       res.end();
       return;
     }
