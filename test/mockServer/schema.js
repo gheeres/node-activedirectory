@@ -27,7 +27,8 @@ schema.com.domain['domain groups'] = {
   'System Directors',
   'VPN Users',
   'Web Administrator', 'Yet Another Group',
-  'Budget Director', 'Accounts Receivable Director'
+  'Budget Director', 'Accounts Receivable Director',
+  'Editors', 'Contributors', 'Web Editors', 'Web Users'
 ].forEach((n) => {
   schema.com.domain['domain groups'][n.toLowerCase()] = {
     type: 'cn',
@@ -38,30 +39,14 @@ schema.com.domain['domain groups'] = {
         distinguishedName: `CN=${n},OU=Domain Groups,DC=domain,DC=com`,
         description: `${n} group`,
         groupType: 1,
+        createTimeStamp: 0,
+        memberOf: [],
         objectClass: ['group'],
         objectCategory: groupCategory
       }
     }
   }
 });
-
-schema.com.domain['domain groups']['my nested users']
-  .value.attributes.memberOf = [
-    schema.com.domain['domain groups']['my users'].value
-  ];
-
-schema.com.domain['domain groups']['another group']
-  .value.attributes.memberOf = [
-    schema.com.domain['domain groups']['my group'].value
-  ];
-schema.com.domain['domain groups']['yet another group']
-  .value.attributes.memberOf = [
-    schema.com.domain['domain groups']['my group'].value
-  ];
-schema.com.domain['domain groups']['authors']
-  .value.attributes.memberOf = [
-    schema.com.domain['domain groups']['my group'].value
-  ];
 
 schema.com.domain['distribution lists'] = {
   type: 'ou',
@@ -81,6 +66,50 @@ schema.com.domain['distribution lists'] = {
     }
   }
 };
+
+// sub-groups
+schema.com.domain['domain groups']['my nested users']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my users'].value
+  );
+schema.com.domain['domain groups']['vpn users']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my users'].value
+  );
+schema.com.domain['domain groups']['web users']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my users'].value
+  );
+
+schema.com.domain['domain groups']['another group']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my group'].value
+  );
+schema.com.domain['domain groups']['yet another group']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my group'].value
+  );
+schema.com.domain['domain groups']['authors']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['my group'].value
+  );
+
+schema.com.domain['domain groups']['editors']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['authors'].value
+  );
+schema.com.domain['domain groups']['contributors']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['authors'].value
+  );
+schema.com.domain['domain groups']['web editors']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['authors'].value
+  );
+schema.com.domain['domain groups']['web users']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['authors'].value
+  );
 
 // Other
 schema.com.domain['other'] = {

@@ -1,45 +1,64 @@
-var _ = require('underscore');
-var assert = require('./assert.more');
-var ActiveDirectory = require('../index');
-var config = require('./config');
+'use strict';
 
-describe('ActiveDirectory', function() {
-  var ad;
-  var settings = require('./settings').getGroupMembershipForGroup;
+const expect = require('chai').expect;
+const ActiveDirectory = require('../index');
+const config = require('./config');
 
-  before(function() {
-    ad = new ActiveDirectory(config);
+let server = require('./mockServer');
+
+describe('getGroupMembershipForGroup Method', function() {
+  let ad;
+  const settings = require('./settings').getGroupMembershipForGroup;
+
+  before(function(done) {
+    server(function(s) {
+      ad = new ActiveDirectory(config);
+      server = s;
+      done();
+    });
   });
 
   describe('#getGroupMembershipForGroup()', function() {
-    settings.groups.forEach(function(group) {
-      ['dn', 'cn'].forEach(function(groupAttribute) {
-        it('should return ' + (group.members || []).length + ' groups for (' + groupAttribute + ') ' + group[groupAttribute], function(done) {
-          ad.getGroupMembershipForGroup(group[groupAttribute], function(err, groups) {
-            if (err) return(done(err));
+    settings.groups.forEach((group) => {
+      ['dn', 'cn'].forEach((groupAttribute) => {
+        const len = group.members.length;
+        const expectedGroup = group[groupAttribute];
+        it(`should return ${len} groups for (${groupAttribute}) ${expectedGroup}`, function(done) {
+          ad.getGroupMembershipForGroup(expectedGroup, function(err, groups) {
+            expect(err).to.be.null;
+            expect(groups).to.not.be.undefined;
+            expect(Array.isArray(groups)).to.be.true;
 
-            assert.equalDifference(group.members || [], groups || []);
+            const cns = groups.map((g) => g.cn);
+            expect(cns).to.deep.include.members(group.members);
+
             done();
           });
         });
       });
     });
+
     it('should return empty groups if groupName doesn\'t exist', function(done) {
       ad.getGroupMembershipForGroup('!!!NON-EXISTENT GROUP!!!', function(err, groups) {
-        if (err) return(done(err));
-        assert(! groups);
+        expect(err).to.be.undefined;
+        expect(groups).to.be.undefined;
         done();
       });
     });
+
     it('should return default group attributes when not specified', function(done) {
-      var defaultAttributes = [ 'dn', 'objectCategory', 'cn', 'description' ];
-      var group = settings.groups[0];
+      const defaultAttributes = ActiveDirectory.defaultAttributes.group;
+      const group = settings.groups[0];
       ad.getGroupMembershipForGroup(group.dn, function(err, groups) {
-        if (err) return(done(err));
-        assert(groups);
-        (groups || []).forEach(function(item) {
-          assert(_.keys(item || {}).length <= defaultAttributes.length);
+        expect(err).to.be.null;
+        expect(groups).to.not.be.undefined;
+        expect(Array.isArray(groups)).to.be.true;
+
+        groups.forEach((group) => {
+          const keys = Object.keys(group);
+          expect(keys.length).to.equal(defaultAttributes.length);
         });
+
         done();
       });
     });
@@ -47,25 +66,22 @@ describe('ActiveDirectory', function() {
 
   describe('#getGroupMembershipForGroup(opts)', function() {
     it('should return only requested attributes', function(done) {
-      var opts = {
+      const opts = {
         attributes: [ 'createTimeStamp' ]
       };
-      var group = settings.groups[0];
+      const group = settings.groups[0];
       ad.getGroupMembershipForGroup(opts, group.dn, function(err, groups) {
-        if (err) return(done(err));
-        assert(groups);
-        assert.equal((group.members || []).length, (groups || []).length);
-        (groups || []).forEach(function(item) {
-          var keys = _.keys(item) || [];
-          assert(keys.length <= opts.attributes.length);
-          if (keys.length === opts.attributes.length) {
-            assert(_.any(opts.attributes, function(attribute) {
-              return(_.any(keys, function(key) {
-                return(key === attribute);
-              }));
-            }));
-          }
+        expect(err).to.be.null;
+        expect(groups).to.not.be.undefined;
+        expect(Array.isArray(groups)).to.be.true;
+        expect(groups.length).to.be.gte(group.members.length);
+
+        groups.forEach((group) => {
+          const keys = Object.keys(group);
+          expect(keys.length).to.equal(opts.attributes.length);
+          expect(keys).to.deep.include.members(opts.attributes);
         });
+
         done();
       });
     });
