@@ -1,8 +1,6 @@
 'use strict';
 
 const expect = require('chai').expect;
-const assert = require('assert');
-const _ = require('underscore');
 const ActiveDirectory = require('../index');
 const config = require('./config');
 
