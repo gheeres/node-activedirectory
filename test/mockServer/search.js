@@ -160,9 +160,20 @@ module.exports = function search(server, settings) {
       return;
     }
 
+    // query for users with filter
+    if (/^\(&\(|\(objectclass=user\)\(/i.test(filter)) {
+      const query = filter
+        .replace('(&(|(objectclass=user)(objectclass=person))(!(objectclass=computer))(!(objectclass=group))', '')
+        .replace('\)', '');
+      const results = schema.filter(query);
+      results.forEach((u) => res.send(u));
+      res.end();
+      return;
+    }
+
     // query for all wildcards
     if (/^.+cn=.+\*?../i.test(filter)) {
-      const query = /cn=([\w\s]+)\*?.+$/i.exec(filter)[1];
+      const query = /cn=(\*?[\w\s]+)\*?.+$/i.exec(filter)[1];
       const results = schema.find(query);
       results.forEach((r) => res.send(r));
       res.end();

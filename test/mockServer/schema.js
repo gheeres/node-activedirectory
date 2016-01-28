@@ -26,7 +26,8 @@ schema.com.domain['domain groups'] = {
   'Parking Department', 'Parking Users', 'Security Users', 'Security Owners',
   'System Directors',
   'VPN Users',
-  'Web Administrator', 'Yet Another Group'
+  'Web Administrator', 'Yet Another Group',
+  'Budget Director', 'Accounts Receivable Director'
 ].forEach((n) => {
   schema.com.domain['domain groups'][n.toLowerCase()] = {
     type: 'cn',
@@ -235,27 +236,51 @@ schema.com.domain['domain users'] = {
     )
   },
 
-  'smith smithers': {
+  'john smith': {
     type: 'cn',
     value: createUserObject(
+      'John',
       'Smith',
-      'Smithers',
-      'SS',
-      'smithers',
+      'JS',
+      'jsmith',
       'Domain Users',
       []
     )
   },
 
-  'smith davis': {
+  'bob smith': {
     type: 'cn',
     value: createUserObject(
+      'Bob',
       'Smith',
-      'Davis',
-      'SD',
-      'sdavis',
+      'BS',
+      'bsmith',
       'Domain Users',
       []
+    )
+  },
+
+  'budget director': {
+    type: 'cn',
+    value: createUserObject(
+      'Budget',
+      'Director',
+      'BD',
+      'bdirector',
+      'Domain Users',
+      ['budget director']
+    )
+  },
+
+  'accounts receivable director': {
+    type: 'cn',
+    value: createUserObject(
+      'Accounts',
+      'Receivable Director',
+      'ARD',
+      'ardirector',
+      'Domain Users',
+      ['accounts receivable director']
     )
   }
 };
@@ -325,6 +350,10 @@ schema.filter = function filter(query) {
   }
 
   loop(schema.com.domain['domain users'], parts[0], parts[1]);
+  loop(schema.com.domain['domain admins'], parts[0], parts[1]);
+  loop(schema.com.domain['domain groups'], parts[0], parts[1]);
+  loop(schema.com.domain['distribution lists'], parts[0], parts[1]);
+  loop(schema.com.domain['other'], parts[0], parts[1]);
 
   return results;
 };
