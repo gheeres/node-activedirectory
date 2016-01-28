@@ -10,13 +10,7 @@ describe('Attributes', function() {
   let ad;
   const settings = require('./settings').findUser;
 
-  const defaultAttributes = [
-    'dn', 'distinguishedName',
-    'userPrincipalName', 'sAMAccountName', 'mail',
-    'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
-    'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
-    'comment', 'description' 
-  ];
+  const defaultAttributes = ActiveDirectory.defaultAttributes.user;
 
   before(function(done) {
     server(function(s) {

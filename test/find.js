@@ -56,14 +56,8 @@ describe('find Method', function() {
     });
     it('should return default query attributes when not specified', function(done) {
       const defaultAttributes = {
-        groups : [ 'dn', 'cn', 'description', 'distinguishedName', 'objectCategory' ],
-        users: [ 
-          'dn', 'distinguishedName',
-          'userPrincipalName', 'sAMAccountName', /*'objectSID',*/ 'mail',
-          'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
-          'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
-          'comment', 'description'
-        ]
+        groups : ActiveDirectory.defaultAttributes.group,
+        users: ActiveDirectory.defaultAttributes.user
       };
       defaultAttributes.other = Array.from(new Set(
         [].concat(defaultAttributes.groups, defaultAttributes.users)

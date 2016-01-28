@@ -39,9 +39,7 @@ describe('findGroup Method', function() {
     });
 
     it('should return default group attributes when not specified', function(done) {
-      const defaultAttributes = [
-        'dn', 'cn', 'description', 'distinguishedName', 'objectCategory'
-      ];
+      const defaultAttributes = ActiveDirectory.defaultAttributes.group;
       ad.findGroup(settings.groupName.dn, function(err, group) {
         expect(err).to.be.null;
         expect(group).to.not.be.null;
