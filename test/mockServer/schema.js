@@ -4,6 +4,7 @@ const RDN = require('ldapjs/lib/dn').RDN;
 
 const groupCategory = 'CN=Group,CN=Schema,CN=Configuration,DC=domain,DC=com';
 const personCategory = 'CN=Person,CN=Schema,CN=Configuration,DC=domain,DC=com';
+const otherCategory = 'CN=Other,CN=Schema,CN=Configuration,DC=domain,DC=com';
 const schema = {};
 
 schema.com = {
@@ -66,6 +67,29 @@ schema.com.domain['distribution lists'] = {
     }
   }
 };
+
+// Other
+schema.com.domain['other'] = {
+  type: 'ou'
+};
+[
+  'parking-computer-01', 'parking-computer-02',
+  'security-test-01', 'security-test-02', 'security-audit-01'
+].forEach((item) => {
+  schema.com.domain['other'][item.toLowerCase()] = {
+    type: 'cn',
+    value: {
+      dn: `CN=${item},OU=Other,DC=domain,DC=com`,
+      attributes: {
+        cn: item,
+        distinguishedName: `CN=${item},OU=Other,DC=domain,DC=com`,
+        description: `Other item ${item}`,
+        objectClass: ['other'],
+        objectCategory: otherCategory
+      }
+    }
+  };
+});
 
 // Users
 function createUserObject(firstName, lastName, initials, username, ou, groups) {
@@ -160,6 +184,30 @@ schema.com.domain['domain users'] = {
       'Domain Users',
       ['all users']
     )
+  },
+
+  'parking attendant #1': {
+    type: 'cn',
+    value: createUserObject(
+      'Parking',
+      'Attendant #1',
+      'PA1',
+      'pattendant1',
+      'Domain Users',
+      []
+    )
+  },
+
+  'parking attendant #2': {
+    type: 'cn',
+    value: createUserObject(
+      'Parking',
+      'Attendant #2',
+      'PA2',
+      'pattendant2',
+      'Domain Users',
+      []
+    )
   }
 };
 
@@ -202,6 +250,35 @@ schema.getByRDN = function getByRDN(rdn) {
   }
 
   return result.value;
+};
+
+schema.find = function find(query) {
+  const _query = query.toLowerCase().replace(/\*/g, '');
+  const groups = schema.com.domain['domain groups'];
+  const lists = schema.com.domain['distribution lists'];
+  const users = schema.com.domain['domain users'];
+  const admins = schema.com.domain['domain admins'];
+  const other = schema.com.domain['other'];
+
+  let results = [];
+  function loop(object, type) {
+    for (let k of Object.keys(object)) {
+      if (!object[k].hasOwnProperty('type')) {
+        continue;
+      }
+      if (k.indexOf(_query) !== -1) {
+        results.push(object[k].value);
+      }
+    }
+  }
+
+  loop(groups);
+  loop(lists);
+  loop(users);
+  loop(admins);
+  loop(other);
+
+  return results;
 };
 
 schema.getGroup = function getGroup(cn) {

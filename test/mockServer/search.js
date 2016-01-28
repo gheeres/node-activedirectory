@@ -53,11 +53,6 @@ module.exports = function search(server, settings) {
       return res.end();
     }
 
-    if (filter.indexOf('*') !== -1) {
-      // not handling wildcard queries yet
-      return res.end();
-    }
-
     // find a user
     if (/^.&.objectcategory=user.*(samaccountname|useprincipalname)/i.test(filter)) {
       let username = /(?:((?:\(samaccountname=.*\))|(?:\(userprincipalname=.*\))))/i
@@ -147,6 +142,16 @@ module.exports = function search(server, settings) {
       if (groups) {
         sendGroups(groups);
       }
+      res.end();
+      return;
+    }
+
+    // query for all wildcards
+    if (/^.+cn=.+\*?../i.test(filter)) {
+      const query = /cn=(\w+)\*.+/i.exec(filter)[1];
+      const results = schema.find(query);
+      //sendGroups(results);
+      results.forEach((r) => res.send(r));
       res.end();
       return;
     }

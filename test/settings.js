@@ -190,7 +190,7 @@ module.exports = {
       }
     }, {
       query: {
-        filter: '(&(CN=Security*)'
+        filter: '(&(CN=Security*))'
       },
       results: {
         users: [
