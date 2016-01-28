@@ -49,6 +49,19 @@ schema.com.domain['domain groups']['my nested users']
     schema.com.domain['domain groups']['my users'].value
   ];
 
+schema.com.domain['domain groups']['another group']
+  .value.attributes.memberOf = [
+    schema.com.domain['domain groups']['my group'].value
+  ];
+schema.com.domain['domain groups']['yet another group']
+  .value.attributes.memberOf = [
+    schema.com.domain['domain groups']['my group'].value
+  ];
+schema.com.domain['domain groups']['authors']
+  .value.attributes.memberOf = [
+    schema.com.domain['domain groups']['my group'].value
+  ];
+
 schema.com.domain['distribution lists'] = {
   type: 'ou',
 
@@ -284,17 +297,23 @@ schema.find = function find(query) {
 schema.getGroup = function getGroup(cn) {
   const cnLower = cn.toLowerCase();
   let group;
-
-  if (Object.keys(schema.com.domain['domain groups']).indexOf(cnLower) !== -1) {
-    group = schema.com.domain['domain groups'][cnLower];
+  if (cnLower.indexOf('*') !== -1) {
+    group = schema.find(cnLower);
   } else {
-    group = schema.com.domain['distribution lists'][cnLower];
-  }
 
-  group.value.attributes.member = schema.getGroupMembers(
-    group.value.attributes.cn
-  );
-  return group.value;
+
+    if (Object.keys(schema.com.domain['domain groups']).indexOf(cnLower) !== -1) {
+      group = schema.com.domain['domain groups'][cnLower];
+    } else {
+      group = schema.com.domain['distribution lists'][cnLower];
+    }
+
+    group.value.attributes.member = schema.getGroupMembers(
+      group.value.attributes.cn
+    );
+    group = group.value;
+  }
+  return group;
 };
 
 schema.getGroupMembers = function getGroupMembers(groupCN) {

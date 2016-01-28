@@ -108,10 +108,13 @@ module.exports = function search(server, settings) {
     if (/^.*objectcategory=group..cn=/i.test(filter) ||
       /^.*objectcategory=group..distinguishedname=cn=/i.test(filter))
     {
-      const groupName = /cn=([\w\s]+)/i.exec(filter)[1];
-      const group = schema.getGroup(groupName);
-      if (group) {
-        res.send(group);
+      const groupName = /cn=([\w\s]+\*?)/i.exec(filter)[1];
+      const result = schema.getGroup(groupName);
+      if (result && Array.isArray(result)) {
+        // a group wildcard search was done
+        result.forEach((r) => res.send(r));
+      } else if (result) {
+        res.send(result);
       }
       res.end();
       return;
@@ -148,9 +151,8 @@ module.exports = function search(server, settings) {
 
     // query for all wildcards
     if (/^.+cn=.+\*?../i.test(filter)) {
-      const query = /cn=(\w+)\*.+/i.exec(filter)[1];
+      const query = /cn=([\w\s]+)\*?.+$/i.exec(filter)[1];
       const results = schema.find(query);
-      //sendGroups(results);
       results.forEach((r) => res.send(r));
       res.end();
       return;
