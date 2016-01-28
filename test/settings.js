@@ -159,7 +159,8 @@ module.exports = {
         filter: 'CN=*Director*'
       },
       results: [
-        'All Directors', 'System Directors'
+        'All Directors', 'System Directors',
+        'Budget Director', 'Accounts Receivable Director'
       ]
     }, {
       query: 'CN=Account - *',
