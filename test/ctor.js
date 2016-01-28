@@ -59,21 +59,23 @@ describe('ctor method', function() {
   });
 
   it('should throw an InvalidCredentialsError exception if the username/password are incorrect.', function(done) {
-    server(function(s) {
-      const ad = new ActiveDirectory(Object.assign({}, config,  {
-        password: 'TheWrongPassword!',
-        username: 'AnInvalidUsername'
-      }));
-      server = s;
-
+    let ad;
+    function doTest() {
       ad.findUser('unknown', function(err, user) {
         expect(err).to.not.be.null;
         expect(err).to.be.an.instanceof(Error);
         expect(err.name).to.equal('InvalidCredentialsError');
         done();
       });
+    }
 
-      done();
+    server(function(s) {
+      ad = new ActiveDirectory(Object.assign({}, config,  {
+        password: 'TheWrongPassword!',
+        username: 'AnInvalidUsername'
+      }));
+      server = s;
+      doTest();
     });
   });
 });

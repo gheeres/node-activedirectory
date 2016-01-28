@@ -27,12 +27,19 @@ FakeDN.prototype.toString = function toString() {
 
 const realParse = require('ldapjs/lib/dn').parse;
 FakeDN.parse = function parse(name) {
+  if (name === 'AnInvalidUsername') {
+    return new FakeDN(
+      new FakeRDN(name)
+    );
+  }
+
   if (name.indexOf('@') !== -1 || name.indexOf('\\') !== -1) {
     // AD principal name
     return new FakeDN(
       new FakeRDN(name)
     );
   }
+
   return realParse(name);
 };
 

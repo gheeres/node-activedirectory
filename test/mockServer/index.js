@@ -8,6 +8,8 @@ const Bunyan = require('bunyan');
 const FakeDN = require('./FakeDN');
 const settings = require('../settings');
 const ldap = require('ldapjs');
+const Protocol = require('ldapjs/lib/protocol');
+const errors = require('ldapjs/lib/errors');
 const connectionHandler = require('./connectionHandler');
 
 let log = new Bunyan({
@@ -114,11 +116,32 @@ util.inherits(Server, ldap.Server);
 // We have to override the bind method so that we can handle weird usernames
 Server.prototype.bind = function bind(name) {
   const args = Array.prototype.slice.call(arguments, 1);
+  /*if (name === 'AnInvalidUsername') {
+    return this._mount(0x60, name, args, true);
+  }*/
   if (name.indexOf('@') !== -1 || name.indexOf('\\') !== -1) {
     return this._mount(0x60, name, args, true);
   }
 
   ldap.Server.prototype.bind.apply(this, arguments);
+};
+
+Server.prototype._getHandlerChain = function _getHandlerChain(req, res) {
+  if (req.protocolOp === Protocol.LDAP_REQ_BIND &&
+      req.dn.toString() === 'AnInvalidUsername')
+  {
+    return {
+      backend: this,
+      handlers: [function(req, res, next) {
+      res.status = errors.LDAP_INVALID_CREDENTIALS;
+      res.matchedDN = req.suffix ? req.suffix.toString() : '';
+      res.errorMessage = '';
+      res.end(res.status);
+      return next();
+      }]
+    };
+  }
+  return ldap.Server.prototype._getHandlerChain.apply(this, arguments);
 };
 
 // We have to override _sortedRouteKeys so that weird username routes don't

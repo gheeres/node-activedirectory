@@ -24,10 +24,11 @@ describe('find Method', function() {
       const userCount = query.results.users.length;
       const groupCount = query.results.groups.length;
       const otherCount = query.results.other.length;
-      it(`should return ${userCount} users, ${groupCount} groups, ${otherCount} other for query '${query.query.filter}'`, function(done) {
+      const _query = (query.query.filter) ? query.query.filter : query.query;
+      it(`should return ${userCount} users, ${groupCount} groups, ${otherCount} other for query '${_query}'`, function(done) {
         this.timeout(timeout);
 
-        ad.find(query.query, function(err, results) {
+        ad.find(_query, function(err, results) {
           expect(err).to.be.null;
           expect(results).to.not.be.null;
 
