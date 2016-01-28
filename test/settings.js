@@ -151,7 +151,7 @@ module.exports = {
     groups: [ { 
       query: 'CN=My Group*',
       results: [
-        'My Group #1', 'My Group #2'
+        'My Group', 'My Group #1', 'My Group #2'
       ],
     }, {
       // A custom query that includes users, should only return group results.
@@ -169,7 +169,7 @@ module.exports = {
       ],
     }, {
       // A custom query that returns no groups
-      query: 'userPrincipalName=username@domain.com',
+      query: 'userPrincipalName=pattendant1@domain.com',
       results: [
       ]
     } ]

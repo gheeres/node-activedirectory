@@ -104,7 +104,7 @@ module.exports = function search(server, settings) {
       return
     }
 
-    // retrieve a group
+    // retrieve a specific group
     if (/^.*objectcategory=group..cn=/i.test(filter) ||
       /^.*objectcategory=group..distinguishedname=cn=/i.test(filter))
     {
@@ -145,6 +145,17 @@ module.exports = function search(server, settings) {
       if (groups) {
         sendGroups(groups);
       }
+      res.end();
+      return;
+    }
+
+    // query for groups with filter
+    if (/^\(&\(objectclass=group\)\(!/i.test(filter)) {
+      const query = filter
+        .replace('(&(objectclass=group)(!(objectclass=computer))(!(objectclass=user))(!(objectclass=person))', '')
+        .replace('\)', '');
+      const results = schema.filter(query);
+      results.forEach((g) => res.send(g));
       res.end();
       return;
     }

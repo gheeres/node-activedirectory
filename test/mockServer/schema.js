@@ -265,15 +265,44 @@ schema.getByRDN = function getByRDN(rdn) {
   return result.value;
 };
 
+// find based on simply equality filter
+// e.g. `(givenName=First)`
+schema.filter = function filter(query) {
+  if (query.indexOf('*') !== -1) {
+    return schema.find(query.replace(/[\(\)]/g, ''));
+  }
+  const parts = query.replace(/[\(\)]/g, '').replace('=', '~~').split('~~');
+
+  const results = [];
+  function loop(object, property, value) {
+    for (let k of Object.keys(object)) {
+      if (!object[k].hasOwnProperty('type')) {
+        continue;
+      }
+      const item = object[k].value;
+      Object.keys(item.attributes).forEach((k) => {
+        if (k.toLowerCase() === property && item.attributes[k] === value) {
+          results.push(item);
+        }
+      });
+    }
+  }
+
+  loop(schema.com.domain['domain users'], parts[0], parts[1]);
+
+  return results;
+};
+
+// wildcard search based on CN
 schema.find = function find(query) {
-  const _query = query.toLowerCase().replace(/\*/g, '');
+  const _query = query.toLowerCase().replace(/\*/g, '').replace(/cn=/, '');
   const groups = schema.com.domain['domain groups'];
   const lists = schema.com.domain['distribution lists'];
   const users = schema.com.domain['domain users'];
   const admins = schema.com.domain['domain admins'];
   const other = schema.com.domain['other'];
 
-  let results = [];
+  const results = [];
   function loop(object, type) {
     for (let k of Object.keys(object)) {
       if (!object[k].hasOwnProperty('type')) {
