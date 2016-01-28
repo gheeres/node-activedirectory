@@ -76,7 +76,7 @@ describe('findGroup Method', function() {
         const cns = group.groups.map((group) => {
           return group.cn;
         });
-        expect(cns).to.have.all.members(settings.groups);
+        expect(cns).to.deep.include.members(settings.groups);
         done();
       });
     });
@@ -91,7 +91,7 @@ describe('findGroup Method', function() {
         const cns = group.groups.map((group) => {
           return group.cn;
         });
-        expect(cns).to.have.all.members(settings.groups);
+        expect(cns).to.deep.include.members(settings.groups);
         done();
       });
     });
@@ -106,7 +106,7 @@ describe('findGroup Method', function() {
         const cns = group.groups.map((group) => {
           return group.cn;
         });
-        expect(cns).to.have.all.members(settings.groups);
+        expect(cns).to.deep.include.members(settings.groups);
         done();
       });
     });

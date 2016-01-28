@@ -161,7 +161,7 @@ module.exports = function search(server, settings) {
     }
 
     // query for users with filter
-    if (/^\(&\(|\(objectclass=user\)\(/i.test(filter)) {
+    if (/^\(&\(\|\(objectclass=user\)\(/i.test(filter)) {
       const query = filter
         .replace('(&(|(objectclass=user)(objectclass=person))(!(objectclass=computer))(!(objectclass=group))', '')
         .replace('\)', '');
