@@ -221,6 +221,42 @@ schema.com.domain['domain users'] = {
       'Domain Users',
       []
     )
+  },
+
+  'another user': {
+    type: 'cn',
+    value: createUserObject(
+      'Another',
+      'User',
+      'AU',
+      'anotheruser',
+      'Domain Users',
+      []
+    )
+  },
+
+  'smith smithers': {
+    type: 'cn',
+    value: createUserObject(
+      'Smith',
+      'Smithers',
+      'SS',
+      'smithers',
+      'Domain Users',
+      []
+    )
+  },
+
+  'smith davis': {
+    type: 'cn',
+    value: createUserObject(
+      'Smith',
+      'Davis',
+      'SD',
+      'sdavis',
+      'Domain Users',
+      []
+    )
   }
 };
 

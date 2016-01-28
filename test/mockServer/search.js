@@ -169,6 +169,14 @@ module.exports = function search(server, settings) {
       return;
     }
 
+    // query for simple filter
+    if (/^\(.+=.+\)$/i.test(filter)) {
+      const results = schema.filter(filter);
+      results.forEach((r) => res.send(r));
+      res.end();
+      return;
+    }
+
     // no conditions matched so just end the connection
     return res.end();
   });
