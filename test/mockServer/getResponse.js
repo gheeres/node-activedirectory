@@ -14,6 +14,8 @@ const SearchRequest = require('ldapjs/lib/messages/search_request');
 const SearchResponse = require('ldapjs/lib/messages/search_response');
 const UnbindResponse = require('ldapjs/lib/messages/unbind_response');
 
+// This is a copy and paste of the ldapjs implementation.
+
 module.exports = function getResponse(req) {
   let Response;
 

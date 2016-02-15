@@ -9,6 +9,14 @@ const dnParse = require('./FakeDN').parse;
 const getResponse = require('./getResponse');
 const setupConnection = require('./setupConnection');
 
+// The functions defined herein are all copied from the ldapjs implementation.
+// The were all inlined in the Server constructor. For legibility, we have
+// refactored them into their own file.
+//
+// This file merely defines the callbacks that will be used to handle incoming
+// client connections and requests.
+
+
 let log;
 let server;
 let options;

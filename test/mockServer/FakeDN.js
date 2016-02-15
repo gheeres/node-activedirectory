@@ -4,6 +4,13 @@ const util = require('util');
 const ldap = require('ldapjs');
 const FakeRDN = require('./FakeRDN');
 
+/**
+ * <p>Implements ldapjs.DN so that we can handle Active Directory style
+ * usernames.</p>
+ *
+ * @param rdns
+ * @constructor
+ */
 function FakeDN(rdns) {
   this.rdns = [rdns];
 }

@@ -1,5 +1,12 @@
 'use strict';
 
+// This file defines the LDAP schema we use during testing. It should be
+// fairly self explanitory. It constructs a plain old JS object that looks
+// an awful lot like a real LDAP schema, with keys representing the paths.
+//
+// There are some utility methods defined on this object to make searching
+// the schema easier. They are defined at the end of this file.
+
 const RDN = require('ldapjs/lib/dn').RDN;
 
 const groupCategory = 'CN=Group,CN=Schema,CN=Configuration,DC=domain,DC=com';

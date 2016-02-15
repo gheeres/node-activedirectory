@@ -2,6 +2,8 @@
 
 const ldap = require('ldapjs');
 
+// This is a simple authentication method so that we can catch the various
+// username types used during testing and return the appropriate responses.
 module.exports = function authentication(server, settings) {
   const baseDN = 'dc=domain,dc=com';
 

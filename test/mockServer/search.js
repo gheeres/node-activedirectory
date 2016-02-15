@@ -1,10 +1,15 @@
 'use strict';
 
-const ldap = require('ldapjs');
 const schema = require('./schema');
 const domainUsers = schema.com.domain['domain users'];
 const domainAdmins = schema.com.domain['domain admins'];
 const baseDN = 'dc=domain,dc=com';
+
+// This is the star of the mockServer show. This method handles all of the
+// LDAP search queries issued by the ActiveDirectory client. Each type
+// of search query is matched by a regular expression, and each type will
+// match only one such expression. The match blocks are ordered in a
+// "succeed/fail fast" ordering.
 
 module.exports = function search(server, settings) {
   server.search(baseDN, function(req, res, next) {
@@ -30,18 +35,6 @@ module.exports = function search(server, settings) {
       for (let user of users) {
         if (user.attributes.sAMAccountName === username) {
           result = user;
-          break;
-        }
-      }
-      return result;
-    }
-
-    function isInGroup(user, group) {
-      let result;
-      for (let g of user.value.attributes.memberOf) {
-        const dn = g.attributes.distinguishedName.toLowerCase();
-        if (dn.indexOf(group.toLowerCase()) !== -1) {
-          result = true;
           break;
         }
       }
@@ -76,7 +69,7 @@ module.exports = function search(server, settings) {
         usernames = usernames.map((u) => {
           const r = u.replace(/distinguishedname=/gi, '');
           return r.replace(/\)/g, '');
-        })
+        });
       } else {
         // just a single user
         usernames = [usernames.replace(/\)/g, '')];
@@ -87,8 +80,6 @@ module.exports = function search(server, settings) {
           res.send(user);
         }
       });
-      /*const user = schema.getByRDN(username.replace(/\)/g, ''));
-      res.send(user);*/
       res.end();
       return;
     }
@@ -101,7 +92,7 @@ module.exports = function search(server, settings) {
         sendGroups(groups);
       }
       res.end();
-      return
+      return;
     }
 
     // retrieve a specific group

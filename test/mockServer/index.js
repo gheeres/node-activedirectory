@@ -1,5 +1,20 @@
 'use strict';
 
+/**
+ * <p>This is a subclass implementation of ldapjs.Server. It's purpose is to
+ * allow Active Directory style credential authorizations, e.g.:</p>
+ *
+ * <ul>
+ *   <li>username</li>
+ *   <li>username@domain</li>
+ *   <li>domain\username</li>
+ * </ul>
+ *
+ * <p>Where possible, we use the super class methods unaltered.</p>
+ *
+ * @type {EventEmitter}
+ */
+
 const EventEmitter = require('events').EventEmitter;
 const net = require('net');
 const tls = require('tls');
@@ -12,6 +27,9 @@ const Protocol = require('ldapjs/lib/protocol');
 const errors = require('ldapjs/lib/errors');
 const connectionHandler = require('./connectionHandler');
 
+
+// ldapjs.Server requires a Bunyan instance to function correctly, so
+// we create a very simple one
 let log = new Bunyan({
   name: 'mock server',
   component: 'client',
@@ -23,6 +41,10 @@ let server;
 // We have to re-implement the whole constructor because we can't modify
 // its internal connection listener. And we need to do that so that we can
 // create invalid DNs to match what Active Directory allows.
+//
+// Most of this method is copied and pasted from the ldapjs.Server code.
+// For legibility, large portions of it are moved to connectionHandler.js,
+// setupConnection.js, and getResponse.js.
 function Server(options) {
   if (options) {
     if (typeof (options) !== 'object') {
@@ -116,9 +138,6 @@ util.inherits(Server, ldap.Server);
 // We have to override the bind method so that we can handle weird usernames
 Server.prototype.bind = function bind(name) {
   const args = Array.prototype.slice.call(arguments, 1);
-  /*if (name === 'AnInvalidUsername') {
-    return this._mount(0x60, name, args, true);
-  }*/
   if (name.indexOf('@') !== -1 || name.indexOf('\\') !== -1) {
     return this._mount(0x60, name, args, true);
   }
@@ -150,6 +169,8 @@ Server.prototype._sortedRouteKeys = function _sortedRouteKeys() {
   return Object.keys(this.routes);
 };
 
+// Scoped function that ldapjs.Server depends upon. This is a strait copy
+// and paste.
 function mergeFunctionArgs(argv, start, end) {
   if (!start) {
     start = 0;
@@ -180,7 +201,9 @@ function mergeFunctionArgs(argv, start, end) {
   return handlers;
 }
 
-// We have to override _mount so that DN parsing will work with weird usernames
+// We have to override _mount so that DN parsing will work with weird usernames.
+// We have simplified the upstream function to always return a FakeDN instance
+// instead of either a plain string or a DN instance.
 Server.prototype._mount = function (op, name, argv) {
   if (typeof (name) !== 'string') {
     throw new TypeError('name (string) required');

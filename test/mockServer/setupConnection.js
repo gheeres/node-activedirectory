@@ -9,6 +9,10 @@ let log;
 let server;
 let options;
 
+// This function is inlined in the Server constructor in the ldapjs
+// implementation. This function is the real meat of the constructor. It sets
+// up the socket that will listen for client connections. This implementation
+// is mostly a copy and paste from the ldapjs implemenation.
 function setupConnection(c) {
   if (c.type === 'unix') {
     c.remoteAddress = self.server.path;
@@ -49,7 +53,8 @@ function setupConnection(c) {
   });
   c.ldap.__defineSetter__('bindDN', function (val) {
     // Here's the whole reason we have re-implemented the full Server
-    // constructor
+    // constructor. We need to be able to send "good" responses for
+    // bind DNs that don't follow the LDAP specification.
     /*if (!(val instanceof DN))
       throw new TypeError('DN required');*/
 
