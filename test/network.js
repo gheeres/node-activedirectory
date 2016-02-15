@@ -17,7 +17,7 @@ describe('Network Connections', function() {
         console.log(err);
         expect(err).to.be.an.instanceof(Error);
         expect(err.code).to.equal('ENOTFOUND');
-        expect(auth).to.be.undefined;
+        expect(auth).to.be.false;
         done();
       });
     });
@@ -29,7 +29,7 @@ describe('Network Connections', function() {
       ad.authenticate(username, password, function(err, auth) {
         expect(err).to.be.an.instanceof(Error);
         expect(err.code).to.equal('ECONNREFUSED');
-        expect(auth).to.be.undefined;
+        expect(auth).to.be.false;
         done();
       });
     });
