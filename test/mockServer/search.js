@@ -166,6 +166,11 @@ module.exports = function search(server, settings) {
     if (/^.+cn=.+\*?../i.test(filter)) {
       const query = /cn=(\*?[\w\s]+)\*?.+$/i.exec(filter)[1];
       const results = schema.find(query);
+
+      if (req.sizeLimit) {
+        results.splice(req.sizeLimit);
+      }
+
       results.forEach((r) => res.send(r));
       res.end();
       return;
