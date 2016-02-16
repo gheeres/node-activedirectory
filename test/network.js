@@ -14,7 +14,6 @@ describe('Network Connections', function() {
         url: 'ldap://invalid.domain.net'
       });
       ad.authenticate(username, password, function(err, auth) {
-        console.log(err);
         expect(err).to.be.an.instanceof(Error);
         expect(err.code).to.equal('ENOTFOUND');
         expect(auth).to.be.false;
