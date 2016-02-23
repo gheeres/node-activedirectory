@@ -12,7 +12,19 @@ const baseDN = 'dc=domain,dc=com';
 // "succeed/fail fast" ordering.
 
 module.exports = function search(server, settings) {
-  server.search(baseDN, function(req, res, next) {
+  server.search('rootDSE', function rootDSESearch(req, res, next) {
+    res.send({
+      dn: '',
+      attributes: {
+        controls: ['foo'],
+        dnsHostName: 'domain.com',
+        serverName: 'cn=mock,cn=sites,cn=configuration,dc=domain,dc=com',
+        supportedLDAPVersion: 3
+      }
+    });
+  });
+
+  server.search(baseDN, function schemaSearch(req, res, next) {
     const filter = req.filter.toString();
 
     function sendGroups(groups) {

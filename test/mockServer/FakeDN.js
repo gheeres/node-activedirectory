@@ -18,6 +18,9 @@ util.inherits(FakeDN, ldap.DN);
 
 FakeDN.prototype.equals = function equals(dn) {
   if (dn instanceof FakeDN) {
+    if (dn.rdns[0].attrs.dn.value === '') {
+      return this.rdns[0].attrs.dn.value === 'rootDSE';
+    }
     return this.rdns[0].attrs.dn.value === dn.rdns[0].attrs.dn.value;
   } else {
     return ldap.DN.prototype.equals.call(this, dn);
@@ -42,6 +45,12 @@ FakeDN.parse = function parse(name) {
 
   if (name.indexOf('@') !== -1 || name.indexOf('\\') !== -1) {
     // AD principal name
+    return new FakeDN(
+      new FakeRDN(name)
+    );
+  }
+
+  if (name === 'rootDSE' || name === '') {
     return new FakeDN(
       new FakeRDN(name)
     );
