@@ -43,8 +43,9 @@ describe('getGroupMembershipForUser Method', function() {
 
     it('should return empty groups if groupName doesn\'t exist', function(done) {
       ad.getGroupMembershipForUser('!!!NON-EXISTENT GROUP!!!', function(err, groups) {
-        expect(err).to.be.undefined;
-        expect(groups).to.be.undefined;
+        expect(err).to.be.null;
+        expect(groups).to.be.an.instanceof(Array);
+        expect(groups.length).to.equal(0);
         done();
       });
     });
