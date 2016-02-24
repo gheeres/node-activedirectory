@@ -5,7 +5,8 @@
   "opts": {
     "encoding": "utf8",
     "destination": "./doc/",
-    "recurse": true
+    "recurse": true,
+    "private": true
   },
   "source": {
     "include": [
