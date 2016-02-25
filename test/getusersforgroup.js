@@ -99,11 +99,9 @@ describe('getUsersForGroup method', function() {
 
         users.forEach((u) => {
           const keys = Object.keys(u);
-          const attrs = Object.keys(opts.attributes);
-
-          expect(keys.length).to.be.lte(attrs.length);
+          expect(keys.length).to.equal(opts.attributes.length);
           keys.forEach((k) => {
-            expect(attrs).to.contain(k);
+            expect(opts.attributes).to.contain(k);
           });
         });
 
