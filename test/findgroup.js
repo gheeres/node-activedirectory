@@ -132,7 +132,7 @@ describe('findGroup Method', function() {
         expect(group).to.not.be.null;
 
         const keys = Object.keys(group);
-        expect(keys.length).to.be.lte(opts.attributes.length);
+        expect(keys.length).to.equal(opts.attributes.length);
         if (keys.length === opts.attributes.length) {
           expect(keys).to.have.any.members(opts.attributes);
         }

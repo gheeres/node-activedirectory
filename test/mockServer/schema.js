@@ -47,6 +47,7 @@ schema.com.domain['domain groups'] = {
         description: `${n} group`,
         groupType: 1,
         createTimeStamp: 0,
+        createdTimestamp: 0,
         memberOf: [],
         objectClass: ['group'],
         objectCategory: groupCategory
