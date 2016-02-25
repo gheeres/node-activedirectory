@@ -40,7 +40,7 @@ describe('ctor method', function() {
         user: [ 'mycustomuserattribute' ]
       }
     }));
-    const defaultAttributes = ad._getDefaultAttributes() || {};
+    const defaultAttributes = ad.defaultAttributes || {};
     expect(defaultAttributes.user.length).to.equal(1);
     expect(defaultAttributes.group.length).to.be.gt(0);
     done();
@@ -52,7 +52,7 @@ describe('ctor method', function() {
         group: [ 'mycustomgroupattribute' ]
       }
     }));
-    const defaultAttributes = ad._getDefaultAttributes() || {};
+    const defaultAttributes = ad.defaultAttributes || {};
     expect(defaultAttributes.group.length).to.equal(1);
     expect(defaultAttributes.user.length).to.be.gt(0);
     done();
