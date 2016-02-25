@@ -156,6 +156,7 @@ function createUserObject(firstName, lastName, initials, username, ou, groups) {
       pwdLastSet: 0,
       userAccountControl: 0,
       employeeID: 0,
+      createTimeStamp: 0,
       sn: lastName,
       givenName: firstName,
       initials: initials,
