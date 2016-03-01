@@ -1,4 +1,6 @@
 doc/
+tester.js
+wallaby.js
 
 .project
 .idea
