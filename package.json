@@ -8,7 +8,7 @@
     "lib": "./lib"
   },
   "engines": {
-    "node": ">=0.8"
+    "node": ">=4.0"
   },
   "keywords": [
     "ldap",
@@ -18,9 +18,9 @@
     "url": "https://github.com/gheeres/node-activedirectory/issues"
   },
   "dependencies": {
-    "async": ">= 0.1.22",
-    "bunyan": ">= 1.3.5",
-    "ldapjs": ">= 0.7.1"
+    "async": "^1.5.0",
+    "bunyan": "=1.3.5",
+    "ldapjs": "^1.0.0"
   },
   "scripts": {
     "test": "mocha --ui bdd test",
@@ -32,8 +32,8 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "chai": "^3.4.1",
+    "chai": "^3.5.0",
     "jsdoc": "^3.4.0",
-    "mocha": "^2.2.5"
+    "mocha": "^2.4.0"
   }
 }
