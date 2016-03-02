@@ -1,7 +1,7 @@
 'use strict';
 
 const expect = require('chai').expect;
-const ActiveDirectory = require('../lib/adpromise');
+const ActiveDirectory = require('../index').promiseWrapper;
 const config = require('./config');
 
 let server = require('./mockServer');
