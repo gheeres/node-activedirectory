@@ -19,7 +19,7 @@ const EventEmitter = require('events').EventEmitter;
 const net = require('net');
 const tls = require('tls');
 const util = require('util');
-const Bunyan = require('bunyan');
+const winston = require('winston');
 const FakeDN = require('./FakeDN');
 const settings = require('../settings');
 const ldap = require('ldapjs');
@@ -28,13 +28,20 @@ const errors = require('ldapjs/lib/errors');
 const connectionHandler = require('./connectionHandler');
 
 
-// ldapjs.Server requires a Bunyan instance to function correctly, so
-// we create a very simple one
-let log = new Bunyan({
-  name: 'mock server',
-  component: 'client',
-  stream: process.stderr
+const logLevels = winston.config.npm.levels;
+const logColors = winston.config.npm.colors;
+logLevels.trace = 3;
+logColors.trace = 'cyan';
+let log = new winston.Logger({
+  transports: [
+    new winston.transports.Console({level: 'info'}),
+  ],
+  levels: logLevels,
+  colors: logColors
 });
+log.trace = function trace() {
+  log.log.apply(log, ['trace'].concat(Array.from(arguments)));
+};
 
 let server;
 
