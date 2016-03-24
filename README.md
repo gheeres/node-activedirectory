@@ -39,7 +39,8 @@ var config = { url: 'ldap://dc.domain.com',
 var ad = new ActiveDirectory(config);
 ```
 
-The username and password specified in the configuration are what are used for user and group lookup operations.
+The username and password specified in the configuration are what are used for
+user and group lookup operations.
 
 Documentation
 --------------
@@ -58,6 +59,18 @@ Documentation
 + [getRootDSE](#getRootDSE)
 + [findDeletedObjects](#findDeletedObjects)
 + [options](#opts)
+
+A Promise wrapper is available for all methods by an alternate `require`
+statement:
+
+```javascript
+const AD = require('activedirectory').promiseWrapper;
+const config = { url: 'ldap://dc.domain.com',
+               baseDN: 'dc=domain,dc=com',
+               username: 'username@domain.com',
+               password: 'password' }
+const ad = new AD(config);
+````
 
 ---------------------------------------
 
