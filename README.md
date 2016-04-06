@@ -412,7 +412,7 @@ __Example__
 var query = 'cn=*George*';
 
 var ad = new ActiveDirectory(config);
-ad.findUsers(query, true, function(err, users) {
+ad.findUsers(query, function(err, users) {
   if (err) {
     console.log('ERROR: ' +JSON.stringify(err));
     return;
