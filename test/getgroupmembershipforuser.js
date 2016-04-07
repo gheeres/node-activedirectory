@@ -1,82 +1,94 @@
-var _ = require('underscore');
-var assert = require('./assert.more');
-var ActiveDirectory = require('../index');
-var config = require('./config');
+'use strict';
 
-describe('ActiveDirectory', function() {
-  var ad;
-  var settings = require('./settings').getGroupMembershipForUser;
+const expect = require('chai').expect;
+const ActiveDirectory = require('../index');
+const config = require('./config');
 
-  before(function() {
-   ad = new ActiveDirectory(config);
+let server = require('./mockServer');
+
+describe('getGroupMembershipForUser Method', function() {
+  let ad;
+  const settings = require('./settings').getGroupMembershipForUser;
+
+  before(function(done) {
+    server(function(s) {
+      ad = new ActiveDirectory(config);
+      server = s;
+      done();
+    });
   });
 
   describe('#getGroupMembershipForUser()', function() {
-    settings.users.forEach(function(user) {
-      ['dn', 'userPrincipalName', 'sAMAccountName'].forEach(function(usernameAttribute) {
-        it('should return ' + (user.members || []).length + ' groups for (' + usernameAttribute + ') ' + user[usernameAttribute], function(done) {
-          ad.getGroupMembershipForUser(user[usernameAttribute], function(err, groups) {
-            if (err) return(done(err));
 
-            assert.equalDifference(user.members || [], groups || []);
-//            assert.equal((user.members || []).length, (groups || []).length);
-//
-//            (user.members || []).forEach(function(source) {
-//              var lowerCaseSource = (source || '').toLowerCase();
-//              assert(_.any(groups, function(result) {
-//                return((result.cn || '').toLowerCase()=== lowerCaseSource);
-//              }));
-//            });
+    settings.users.forEach((user) => {
+      ['dn', 'userPrincipalName', 'sAMAccountName'].forEach((attr) => {
+        const len = user.members.length;
+        it(`should return ${len} groups for ${attr}`, function(done) {
+          ad.getGroupMembershipForUser(user[attr], function(err, groups) {
+            expect(err).to.be.null;
+            expect(groups.length).to.gte(user.members.length);
+
+            const groupNames = groups.map((g) => {
+              return g.cn
+            });
+            user.members.forEach((g) => {
+              expect(groupNames).to.contain(g);
+            });
+
             done();
           });
         });
       });
     });
+
     it('should return empty groups if groupName doesn\'t exist', function(done) {
       ad.getGroupMembershipForUser('!!!NON-EXISTENT GROUP!!!', function(err, groups) {
-        if (err) return(done(err));
-
-        assert(! groups);
+        expect(err).to.be.null;
+        expect(groups).to.be.an.instanceof(Array);
+        expect(groups.length).to.equal(0);
         done();
       });
     });
+
     it('should return default group attributes when not specified', function(done) {
-      var defaultAttributes = [ 'objectCategory', 'distinguishedName', 'cn', 'description' ];
-      var user = settings.users[0];
+      const defaultAttributes = [ 'objectCategory', 'distinguishedName', 'cn', 'description' ];
+      const user = settings.users[0];
       ad.getGroupMembershipForUser(user.userPrincipalName, function(err, groups) {
-        if (err) return(done(err));
-        assert(groups);
+        expect(err).to.be.null;
+        expect(groups).to.not.be.undefined;
 
-        (groups || []).forEach(function(group) {
-          assert(_.keys(group || {}).length <= defaultAttributes.length);
+        groups.forEach((g) => {
+          const keys = Object.keys(g);
+          defaultAttributes.forEach((attr) => {
+            expect(keys).to.contain(attr);
+          });
         });
+
         done();
       });
     });
+
   });
 
   describe('#getGroupMembershipForUser(opts)', function() {
     it('should return only requested attributes', function(done) {
-      var opts = {
+      const opts = {
         attributes: [ 'createTimeStamp' ]
       };
-      var user = settings.users[0];
-      ad.getGroupMembershipForUser(opts, user.userPrincipalName, function(err, groups) {
-        if (err) return(done(err));
-        assert(groups);
+      const user = settings.users[0];
 
-        assert.equal((user.members || []).length, (groups || []).length);
-        (groups || []).forEach(function(group) {
-          var keys = _.keys(group) || [];
-          assert(keys.length <= opts.attributes.length);
-          if (keys.length === opts.attributes.length) {
-            assert(_.any(opts.attributes, function(attribute) {
-              return(_.any(keys, function(key) {
-                return(key === attribute);
-              }));
-            }));
-          }
+      ad.getGroupMembershipForUser(opts, user.userPrincipalName, function(err, groups) {
+        expect(err).to.be.null;
+        expect(groups).to.not.be.undefined;
+        expect(groups.length).to.gte(user.members.length);
+
+        groups.forEach((g) => {
+          const keys = Object.keys(g);
+          keys.forEach((attr) => {
+            expect(opts.attributes).to.contain(attr);
+          });
         });
+
         done();
       });
     });

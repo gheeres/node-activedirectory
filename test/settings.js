@@ -57,7 +57,7 @@ module.exports = {
   // Test settings for getGroupMembershipForUser
   getGroupMembershipForUser: {
     users: [ { 
-      dn: 'First Last Name,OU=Domain Users,DC=domain,DC=com',
+      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
       sAMAccountName: 'username',
       userPrincipalName: 'username@domain.com',
       // The list of groups (commonName) that this user is a member of.
@@ -151,7 +151,7 @@ module.exports = {
     groups: [ { 
       query: 'CN=My Group*',
       results: [
-        'My Group #1', 'My Group #2'
+        'My Group', 'My Group #1', 'My Group #2'
       ],
     }, {
       // A custom query that includes users, should only return group results.
@@ -159,7 +159,8 @@ module.exports = {
         filter: 'CN=*Director*'
       },
       results: [
-        'All Directors', 'System Directors'
+        'All Directors', 'System Directors',
+        'Budget Director', 'Accounts Receivable Director'
       ]
     }, {
       query: 'CN=Account - *',
@@ -169,7 +170,7 @@ module.exports = {
       ],
     }, {
       // A custom query that returns no groups
-      query: 'userPrincipalName=username@domain.com',
+      query: 'userPrincipalName=pattendant1@domain.com',
       results: [
       ]
     } ]
@@ -190,7 +191,7 @@ module.exports = {
       }
     }, {
       query: {
-        filter: '(&(CN=Security*)'
+        filter: '(&(CN=Security*))'
       },
       results: {
         users: [

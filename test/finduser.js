@@ -1,53 +1,53 @@
-var assert = require('assert');
-var _ = require('underscore');
-var ActiveDirectory = require('../index');
-var config = require('./config');
+'use strict';
 
-describe('ActiveDirectory', function() {
-  var ad;
-  var settings = require('./settings').findUser;
+const expect = require('chai').expect;
+const ActiveDirectory = require('../index');
+const config = require('./config');
 
-  before(function() {
-   ad = new ActiveDirectory(config);
+let server = require('./mockServer');
+
+describe('findUser Method', function() {
+  let ad;
+  const settings = require('./settings').findUser;
+
+  before(function(done) {
+    server(function(s) {
+      ad = new ActiveDirectory(config);
+      server = s;
+      done();
+    });
   });
 
   describe('#findUser()', function() {
-    [ 'userPrincipalName', 'sAMAccountName', 'dn' ].forEach(function(userAttribute) {
-      it('should return user for (' + userAttribute + ') ' + settings.username[userAttribute], function(done) {
-        ad.findUser(settings.username[userAttribute], function(err, user) {
-          if (err) return(done(err));
-          assert(user);
+    [ 'userPrincipalName', 'sAMAccountName', 'dn' ].forEach((userAttribute) => {
+      const username = settings.username[userAttribute];
+      it(`should return user for (${userAttribute}) ${username}`, function(done) {
+        ad.findUser(username, function(err, user) {
+          expect(err).to.be.null;
+          expect(user).to.not.be.null;
           done();
         });
       });
     });
+
     it('should return undefined if the username doesn\'t exist', function(done) {
       ad.findUser('!!!NON-EXISTENT USER!!!', function(err, user) {
-        if (err) return(done(err));
-        assert(! user);
+        expect(err).to.be.undefined;
+        expect(user).to.be.undefined;
         done();
       });
     });
-    it('should return default user attributes when not specified', function(done) {
-      var defaultAttributes = [ 
-        'dn', 'distinguishedName',
-        'userPrincipalName', 'sAMAccountName', /*'objectSID',*/ 'mail',
-        'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
-        'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
-        'comment', 'description' 
-      ];
-      ad.findUser(settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
 
-        var attributes = _.keys(user) || [];
-        assert(attributes.length <= defaultAttributes.length);
-        attributes.forEach(function(attribute) {
-          var lowerCaseAttribute = (attribute || '').toLowerCase();
-          assert(_.any(defaultAttributes, function(defaultAttribute) {
-            return(lowerCaseAttribute === (defaultAttribute || '').toLowerCase());
-          }));
-        });
+    it('should return default user attributes when not specified', function(done) {
+      const defaultAttributes = ActiveDirectory.defaultAttributes.user;
+      ad.findUser(settings.username.userPrincipalName, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+
+        const attributes = Object.keys(user);
+        expect(attributes.length).to.equal(defaultAttributes.length);
+        expect(attributes).to.be.any.members(defaultAttributes);
+
         done();
       });
     });
@@ -55,83 +55,95 @@ describe('ActiveDirectory', function() {
   
   describe('#findUser(opts)', function() {
     it('should use the custom opts.filter if provided', function(done) {
-      var opts = {
+      const opts = {
         filter: settings.opts.custom
       };
-      ad.findUser(opts, settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
-        assert((settings.username.userPrincipalName || '').toLowerCase() !== (user.userPrincipalName || '').toLowerCase());
+      const username = settings.username.userPrincipalName;
+      ad.findUser(opts, username, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+        expect(user.userPrincipalName).to.not.equal(username);
         done();
       });
     });
+
     it('should include groups/membership if opts.includeMembership[] = [ \'all\' ]', function(done) {
-      var opts = {
+      const opts = {
         includeMembership: [ 'all' ]
       };
-      ad.findUser(opts, settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
+      const username = settings.username.userPrincipalName;
+      ad.findUser(opts, username, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+        expect(user.groups.length).to.be.gte(settings.groups.length);
+
+        const cns = user.groups.map((g) => g.cn);
+        expect(cns).to.deep.include.members(settings.groups);
+
         done();
       });
     });
+
     it('should include groups/membership if opts.includeMembership[] = [ \'user\' ]', function(done) {
-      var opts = {
+      const opts = {
         includeMembership: [ 'user' ]
       };
-      ad.findUser(opts, settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
+      const username = settings.username.userPrincipalName;
+      ad.findUser(opts, username, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+        expect(user.groups.length).to.be.gte(settings.groups.length);
+
+        const cns = user.groups.map((g) => g.cn);
+        expect(cns).to.deep.include.members(settings.groups);
+
         done();
       });
     });
+
     it('should return expected groups/membership if opts.includeMembership enabled', function(done) {
-      var opts = {
+      const opts = {
         includeMembership: [ 'user', 'all' ]
       };
-      ad.findUser(opts, settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
-        assert.equal((settings.groups || []).length, (user.groups || []).length);
-        (user.groups || []).forEach(function(group) {
-          var lowercaseGroup = (group.cn || '').toLowerCase();
-          assert(_.any(settings.groups || [], function(expectedGroup) {
-            return(lowercaseGroup === expectedGroup.toLowerCase());
-          }));
-        });
+      const username = settings.username.userPrincipalName;
+      ad.findUser(opts, username, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+        expect(user.groups.length).to.be.gte(settings.groups.length);
+
+        const cns = user.groups.map((g) => g.cn);
+        expect(cns).to.deep.include.members(settings.groups);
+
         done();
       });
     });
+
     it('should return only the first user if more than one result returned', function(done) {
-      var opts = {
+      const opts = {
         filter: settings.opts.multipleFilter
       };
       ad.findUser(opts, '' /* ignored since we're setting our own filter */, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
-        assert(! _.isArray(user));
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
+        expect(Array.isArray(user)).to.be.false;
+
         done();
       });
     });
+
     it('should return only requested attributes', function(done) {
-      var opts = {
+      const opts = {
         attributes: [ 'cn' ]
       };
-      ad.findUser(opts, settings.username.userPrincipalName, function(err, user) {
-        if (err) return(done(err));
-        assert(user);
+      const username = settings.username.userPrincipalName;
+      ad.findUser(opts, username, function(err, user) {
+        expect(err).to.be.null;
+        expect(user).to.not.be.null;
 
-        var keys = _.keys(user) || [];
-        assert(keys.length <= opts.attributes.length);
-        if (keys.length === opts.attributes.length) {
-          assert(_.any(opts.attributes, function(attribute) {
-            return(_.any(keys, function(key) {
-              return(key === attribute);
-            }));
-          }));
-        }
+        const keys = Object.keys(user);
+        expect(keys.length).to.be.lte(opts.attributes.length);
+        expect(keys).to.be.any.members(opts.attributes);
+
         done();
       });
     });

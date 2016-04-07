@@ -1,202 +1,215 @@
-var assert = require('assert');
-var _ = require('underscore');
-var ActiveDirectory = require('../index');
-var config = require('./config');
+'use strict';
 
-describe('ActiveDirectory', function() {
-  var ad;
-  var settings = require('./settings').find;
-  var timeout = 6000; // The timeout in milliseconds before a test is considered failed. 
+const expect = require('chai').expect;
+const ActiveDirectory = require('../index');
+const config = require('./config');
 
-  before(function() {
-   ad = new ActiveDirectory(config);
+let server = require('./mockServer');
+
+describe('find Method', function() {
+  let ad;
+  const settings = require('./settings').find;
+  const timeout = 6000; // The timeout in milliseconds before a test is considered failed.
+
+  before(function(done) {
+    server(function(s) {
+      ad = new ActiveDirectory(config);
+      server = s;
+      done();
+    });
   });
 
   describe('#find()', function() {
     settings.queries.forEach(function(query) {
-      it('should return ' + ((query.results || []).users || []).length + ' users, ' + 
-                            ((query.results || []).groups|| []).length + ' groups, ' +
-                            ((query.results || []).other || []).length + ' other ' +
-                            'for query \'' + JSON.stringify(query.query) + '\'', function(done) {
+      const userCount = query.results.users.length;
+      const groupCount = query.results.groups.length;
+      const otherCount = query.results.other.length;
+      const _query = (query.query.filter) ? query.query.filter : query.query;
+      it(`should return ${userCount} users, ${groupCount} groups, ${otherCount} other for query '${_query}'`, function(done) {
         this.timeout(timeout);
 
-        ad.find(query.query, function(err, results) {
-          if (err) return(done(err));
-          assert(results);
+        ad.find(_query, function(err, results) {
+          expect(err).to.be.null;
+          expect(results).to.not.be.null;
 
-          ['users', 'groups', 'other'].forEach(function(key) {
-            var expectedResults = ((query.results || [])[key] || []);
-            var actualResults = ((results || [])[key] || []);
+          ['users', 'groups', 'other'].forEach((key) => {
+            const expectedResults = query.results[key];
+            const actualResults = results[key];
 
-            assert.equal(expectedResults.length, actualResults.length,
-                         'Only ' + actualResults.length + ' ' + key + ' retrieved. ' +
-                         'Expected: ' + JSON.stringify(expectedResults) + '; ' +
-                         'Actual: ' + JSON.stringify(_.map(actualResults || [], function(item) { return(item.cn); })));
-            (expectedResults || []).forEach(function(expectedResult) {
-              var lowerCaseExpectedResult = (expectedResult || '').toLowerCase();
-              assert(_.any(actualResults || [], function(result) {
-                return(lowerCaseExpectedResult === (result.cn || '').toLowerCase());
-              }), 'Expected ' + key + ' result ' + expectedResult + ' not found in list of results: ' + JSON.stringify(actualResults));
+            expect(actualResults.length).to.equal(expectedResults.length);
+
+            const cns = actualResults.map((result) => {
+              return result.cn;
+            });
+            expectedResults.forEach((expectedResult) => {
+              expect(cns.filter((cn) => {
+                  return cn
+                      .toLowerCase()
+                      .indexOf(expectedResult.toLowerCase()) !== -1
+                }).length)
+                .to.equal(1);
             });
           });
+
           done();
         });
       });
     });
     it('should return default query attributes when not specified', function(done) {
-      var defaultAttributes = {
-        groups : [ 'dn', 'objectCategory', 'cn', 'description' ],
-        users: [ 
-          'dn',
-          'userPrincipalName', 'sAMAccountName', 'mail',
-          'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
-          'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
-          'comment', 'description' 
-        ],
+      const defaultAttributes = {
+        groups : ActiveDirectory.defaultAttributes.group,
+        users: ActiveDirectory.defaultAttributes.user
       };
-      defaultAttributes.other = _.union(defaultAttributes.groups, defaultAttributes.users);
+      defaultAttributes.other = Array.from(new Set(
+        [].concat(defaultAttributes.groups, defaultAttributes.users)
+      ));
 
-      var query = settings.queries[0];
+      const query = settings.queries[0];
       ad.find(query.query, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var keyAttributes = defaultAttributes[key] || [];
-          ((results || [])[key] || []).forEach(function(result) {
-            var attributes = _.keys(result || {}) || [];
-            assert(attributes.length <= keyAttributes.length);
-            attributes.forEach(function(attribute) {
-              var lowerCaseAttribute = (attribute || '').toLowerCase();
-              assert(_.any(keyAttributes, function(defaultAttribute) {
-                return(lowerCaseAttribute === (defaultAttribute || '').toLowerCase());
-              }));
+        ['users', 'groups', 'other'].forEach((key) => {
+          const keyAttributes = defaultAttributes[key];
+          results[key].forEach((result) => {
+            const attributes = Object.keys(result);
+            expect(attributes.length).to.be.lte(keyAttributes.length);
+            attributes.forEach((attribute) => {
+              expect(keyAttributes).to.contain(attribute);
             });
           });
         });
+
         done();
       });
     });
   });
+
   describe('#find(opts)', function() {
     it('should include groups/membership groups and users if opts.includeMembership[] = [ \'all\' ]', function(done) {
       this.timeout(timeout);
 
-      var query = settings.queries[0];
-      var opts = {
+      const query = settings.queries[0];
+      const opts = {
         includeMembership: [ 'all' ],
         filter: query.query
       };
       ad.find(opts, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        // Not verifying actual group results, just verifying 
-        // that groups attribute exists for groups and users results.
-        // Others should NOT have groups.
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var items = (results || {})[key] || [];
-          assert(_.any(items || [], function(item) {
-            return((key === 'other') ? (! item.groups) : item.groups);
-          }));
+        results['users'].forEach((user) => {
+            expect(user.groups).to.exist;
         });
+
+        results['groups'].forEach((group) => {
+            expect(group.groups).to.exist;
+        });
+
+        results['other'].forEach((other) => {
+          expect(other.groups).to.not.exist;
+        });
+
         done();
       });
     });
+
     it('should include groups/membership for groups if opts.includeMembership[] = [ \'group\' ]', function(done) {
       this.timeout(timeout);
 
-      var query = settings.queries[0];
-      var opts = {
+      const query = settings.queries[0];
+      const opts = {
         includeMembership: [ 'group' ],
         filter: query.query
       };
       ad.find(opts, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        // Not verifying actual group results, just verifying 
-        // that groups attribute exists for group results. 
-        // Users and others should NOT have groups.
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var items = (results || {})[key] || [];
-          assert(_.any(items || [], function(item) {
-            return((key === 'groups') ? item.groups : (! item.groups));
-          }));
+        results['groups'].forEach((group) => {
+            expect(group.groups).to.exist;
         });
+
+        ['users', 'other'].forEach((key) => {
+          const items = results[key];
+          items.forEach((item) => {
+            expect(item.groups).to.not.exist;
+          });
+        });
+
         done();
       });
     });
+
     it('should include groups/membership for users if opts.includeMembership[] = [ \'user\' ]', function(done) {
       this.timeout(timeout);
 
-      var query = settings.queries[0];
-      var opts = {
+      const query = settings.queries[0];
+      const opts = {
         includeMembership: [ 'user' ],
         filter: query.query
       };
       ad.find(opts, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        // Not verifying actual group results, just verifying 
-        // that groups attribute exists for groups and users results.
-        // Groups and others should NOT have groups.
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var items = (results || {})[key] || [];
-          assert(_.any(items || [], function(item) {
-            return((key === 'users') ? item.groups : (! item.groups));
-          }));
+        results['users'].forEach((user) => {
+            expect(user.groups).to.exist;
         });
+
+        ['groups', 'other'].forEach((key) => {
+          const items = results[key];
+          items.forEach((item) => {
+            expect(item.groups).to.not.exist;
+          });
+        });
+
         done();
       });
     });
+
     it('should not include groups/membership if opts.includeMembership disabled', function(done) {
-      var query = settings.queries[0];
-      var opts = {
+      const query = settings.queries[0];
+      const opts = {
         includeMembership: false,
         filter: query.query
       };
       ad.find(opts, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        // Not verifying actual group results, just verifying 
-        // that groups attribute does NOT exist.
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var items = (results || {})[key] || [];
-          assert(_.all(items || [], function(item) {
-            return(! item.groups);
-          }));
+        ['users', 'groups', 'other'].forEach((key) => {
+          const items = results[key];
+          items.forEach((item) => {
+            expect(item.groups).to.not.exist;
+          });
         });
+
         done();
       });
     });
+
     it('should return only requested attributes', function(done) {
       this.timeout(timeout);
-      var query = settings.queries[0];
-      var opts = {
+      const query = settings.queries[0];
+      const opts = {
         attributes: [ 'cn' ],
         filter: query.query
       };
       ad.find(opts, function(err, results) {
-        if (err) return(done(err));
-        assert(results);
+        expect(err).to.be.null;
+        expect(results).to.not.be.null;
 
-        ['users', 'groups', 'other'].forEach(function(key) {
-          var actualResults = (results || {})[key] || [];
-          (actualResults || []).forEach(function(result) {
-            var keys = _.keys(result) || [];
-            assert(keys.length <= opts.attributes.length);
+        ['users', 'groups', 'other'].forEach((key) => {
+          results[key].forEach((result) => {
+            const keys = Object.keys(result);
+            expect(keys.length).to.be.lte(opts.attributes.length);
             if (keys.length === opts.attributes.length) {
-              assert(_.any(opts.attributes, function(attribute) {
-                return(_.any(keys, function(key) {
-                  return(key === attribute);
-                }));
-              }));
+              expect(keys).to.deep.equal(opts.attributes);
             }
           });
         });
+
         done();
       });
     });
