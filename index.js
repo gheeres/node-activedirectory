@@ -1,2 +1,2 @@
-module.exports = require('./lib/activedirectory');
-module.exports.promiseWrapper = require('./lib/adpromise');
+module.exports = require('./lib/activedirectory')
+module.exports.promiseWrapper = require('./lib/adpromise')

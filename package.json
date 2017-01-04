@@ -30,9 +30,14 @@
     "winston": "^2.3.0"
   },
   "scripts": {
+    "lint": "standard",
     "test": "mocha --ui bdd test",
     "doc": "jsdoc -c jsdoc.json"
   },
+  "precommit": [
+    "lint",
+    "test"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/jsumners/node-activedirectory.git"
@@ -41,6 +46,8 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "jsdoc": "^3.4.3",
-    "mocha": "^3.2.0"
+    "mocha": "^3.2.0",
+    "pre-commit": "^1.2.2",
+    "standard": "^8.6.0"
   }
 }

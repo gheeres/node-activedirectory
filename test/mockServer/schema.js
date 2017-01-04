@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 // This file defines the LDAP schema we use during testing. It should be
 // fairly self explanitory. It constructs a plain old JS object that looks
@@ -7,19 +7,19 @@
 // There are some utility methods defined on this object to make searching
 // the schema easier. They are defined at the end of this file.
 
-const RDN = require('ldapjs/lib/dn').RDN;
+const RDN = require('ldapjs/lib/dn').RDN
 
-const groupCategory = 'CN=Group,CN=Schema,CN=Configuration,DC=domain,DC=com';
-const personCategory = 'CN=Person,CN=Schema,CN=Configuration,DC=domain,DC=com';
-const otherCategory = 'CN=Other,CN=Schema,CN=Configuration,DC=domain,DC=com';
-const schema = {};
+const groupCategory = 'CN=Group,CN=Schema,CN=Configuration,DC=domain,DC=com'
+const personCategory = 'CN=Person,CN=Schema,CN=Configuration,DC=domain,DC=com'
+const otherCategory = 'CN=Other,CN=Schema,CN=Configuration,DC=domain,DC=com'
+const schema = {}
 
 schema.com = {
   type: 'dc'
-};
+}
 schema.com.domain = {
   type: 'dc'
-};
+}
 
 // Groups
 schema.com.domain['domain groups'] = {
@@ -54,7 +54,7 @@ schema.com.domain['domain groups'] = {
       }
     }
   }
-});
+})
 
 schema.com.domain['distribution lists'] = {
   type: 'ou',
@@ -73,51 +73,51 @@ schema.com.domain['distribution lists'] = {
       }
     }
   }
-};
+}
 
 // sub-groups
 schema.com.domain['domain groups']['my nested users']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my users'].value
-  );
+  )
 schema.com.domain['domain groups']['vpn users']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my users'].value
-  );
+  )
 schema.com.domain['domain groups']['web users']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my users'].value
-  );
+  )
 
 schema.com.domain['domain groups']['another group']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my group'].value
-  );
+  )
 schema.com.domain['domain groups']['yet another group']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my group'].value
-  );
+  )
 schema.com.domain['domain groups']['authors']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my group'].value
-  );
+  )
 
 schema.com.domain['domain groups']['editors']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['authors'].value
-  );
+  )
 schema.com.domain['domain groups']['contributors']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['authors'].value
-  );
+  )
 schema.com.domain['domain groups']['web editors']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['authors'].value
-  );
+  )
 schema.com.domain['domain groups']['web users']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['authors'].value
-  );
+  )
 
 // Other
 schema.com.domain['other'] = {
@@ -139,11 +139,11 @@ schema.com.domain['other'] = {
         objectCategory: otherCategory
       }
     }
-  };
-});
+  }
+})
 
 // Users
-function createUserObject(firstName, lastName, initials, username, ou, groups) {
+function createUserObject (firstName, lastName, initials, username, ou, groups) {
   const user = {
     dn: `CN=${firstName} ${lastName},OU=${ou},DC=domain,DC=com`,
     attributes: {
@@ -169,23 +169,23 @@ function createUserObject(firstName, lastName, initials, username, ou, groups) {
       extraAttributeForTesting: '',
       memberOf: []
     }
-  };
+  }
 
   groups.forEach((g) => {
-    const gLower = g.toLowerCase();
+    const gLower = g.toLowerCase()
     if (Object.keys(schema.com.domain['domain groups']).indexOf(gLower) !== -1) {
       user.attributes.memberOf.push(
         schema.com.domain['domain groups'][gLower].value
-      );
+      )
     }
     if (Object.keys(schema.com.domain['distribution lists']).indexOf(gLower) !== -1) {
       user.attributes.memberOf.push(
         schema.com.domain['distribution lists'][gLower].value
-      );
+      )
     }
-  });
+  })
 
-  return user;
+  return user
 }
 
 schema.com.domain['domain users'] = {
@@ -321,7 +321,7 @@ schema.com.domain['domain users'] = {
       ['accounts receivable director']
     )
   }
-};
+}
 
 schema.com.domain['domain admins'] = {
   type: 'ou',
@@ -337,142 +337,140 @@ schema.com.domain['domain admins'] = {
       ['my users', 'web administrator', 'domain admins']
     )
   }
-};
+}
 
 // methods
-schema.getByRDN = function getByRDN(rdn) {
-  let _rdn;
+schema.getByRDN = function getByRDN (rdn) {
+  let _rdn
   if (rdn instanceof RDN) {
-    _rdn = rdn.toString().toLowerCase();
+    _rdn = rdn.toString().toLowerCase()
   } else if (!(typeof rdn === 'string')) {
-    throw new Error('rdn must be a string or instance of RDN');
+    throw new Error('rdn must be a string or instance of RDN')
   } else {
-    _rdn = rdn.toLowerCase();
+    _rdn = rdn.toLowerCase()
   }
 
-  const components = _rdn.split(',');
-  const path = [];
+  const components = _rdn.split(',')
+  const path = []
   for (let i = (components.length - 1); i >= 0; i = i - 1) {
-    path.push(components[i].split('=')[1].replace(/[()]/g, ''));
+    path.push(components[i].split('=')[1].replace(/[()]/g, ''))
   }
 
-  let result = schema;
+  let result = schema
   for (let p of path) {
-    result = result[p];
+    result = result[p]
   }
 
-  return result.value;
-};
+  return result.value
+}
 
 // find based on simply equality filter
 // e.g. `(givenName=First)`
-schema.filter = function filter(query) {
+schema.filter = function filter (query) {
   if (query.indexOf('*') !== -1) {
-    return schema.find(query.replace(/[\(\)]/g, ''));
+    return schema.find(query.replace(/[()]/g, ''))
   }
-  const parts = query.replace(/[\(\)]/g, '').replace('=', '~~').split('~~');
+  const parts = query.replace(/[()]/g, '').replace('=', '~~').split('~~')
 
-  const results = [];
-  function loop(object, property, value) {
+  const results = []
+  function loop (object, property, value) {
     for (let k of Object.keys(object)) {
       if (!object[k].hasOwnProperty('type')) {
-        continue;
+        continue
       }
-      const item = object[k].value;
+      const item = object[k].value
       Object.keys(item.attributes).forEach((k) => {
         if (k.toLowerCase() === property && item.attributes[k] === value) {
-          results.push(item);
+          results.push(item)
         }
-      });
+      })
     }
   }
 
-  loop(schema.com.domain['domain users'], parts[0], parts[1]);
-  loop(schema.com.domain['domain admins'], parts[0], parts[1]);
-  loop(schema.com.domain['domain groups'], parts[0], parts[1]);
-  loop(schema.com.domain['distribution lists'], parts[0], parts[1]);
-  loop(schema.com.domain['other'], parts[0], parts[1]);
+  loop(schema.com.domain['domain users'], parts[0], parts[1])
+  loop(schema.com.domain['domain admins'], parts[0], parts[1])
+  loop(schema.com.domain['domain groups'], parts[0], parts[1])
+  loop(schema.com.domain['distribution lists'], parts[0], parts[1])
+  loop(schema.com.domain['other'], parts[0], parts[1])
 
-  return results;
-};
+  return results
+}
 
 // wildcard search based on CN
-schema.find = function find(query) {
-  const _query = query.toLowerCase().replace(/\*/g, '').replace(/cn=/, '');
-  const groups = schema.com.domain['domain groups'];
-  const lists = schema.com.domain['distribution lists'];
-  const users = schema.com.domain['domain users'];
-  const admins = schema.com.domain['domain admins'];
-  const other = schema.com.domain['other'];
+schema.find = function find (query) {
+  const _query = query.toLowerCase().replace(/\*/g, '').replace(/cn=/, '')
+  const groups = schema.com.domain['domain groups']
+  const lists = schema.com.domain['distribution lists']
+  const users = schema.com.domain['domain users']
+  const admins = schema.com.domain['domain admins']
+  const other = schema.com.domain['other']
 
-  const results = [];
-  function loop(object, type) {
+  const results = []
+  function loop (object, type) {
     for (let k of Object.keys(object)) {
       if (!object[k].hasOwnProperty('type')) {
-        continue;
+        continue
       }
       if (k.indexOf(_query) !== -1) {
-        results.push(object[k].value);
+        results.push(object[k].value)
       }
     }
   }
 
-  loop(groups);
-  loop(lists);
-  loop(users);
-  loop(admins);
-  loop(other);
+  loop(groups)
+  loop(lists)
+  loop(users)
+  loop(admins)
+  loop(other)
 
-  return results;
-};
+  return results
+}
 
-schema.getGroup = function getGroup(cn) {
-  const cnLower = cn.toLowerCase();
-  let group;
+schema.getGroup = function getGroup (cn) {
+  const cnLower = cn.toLowerCase()
+  let group
   if (cnLower.indexOf('*') !== -1) {
-    group = schema.find(cnLower);
+    group = schema.find(cnLower)
   } else {
-
-
     if (Object.keys(schema.com.domain['domain groups']).indexOf(cnLower) !== -1) {
-      group = schema.com.domain['domain groups'][cnLower];
+      group = schema.com.domain['domain groups'][cnLower]
     } else {
-      group = schema.com.domain['distribution lists'][cnLower];
+      group = schema.com.domain['distribution lists'][cnLower]
     }
 
     group.value.attributes.member = schema.getGroupMembers(
       group.value.attributes.cn
-    );
-    group = group.value;
+    )
+    group = group.value
   }
-  return group;
-};
+  return group
+}
 
-schema.getGroupMembers = function getGroupMembers(groupCN) {
-  const domainUsers = schema.com.domain['domain users'];
-  const adminUsers = schema.com.domain['domain admins'];
-  const members = [];
+schema.getGroupMembers = function getGroupMembers (groupCN) {
+  const domainUsers = schema.com.domain['domain users']
+  const adminUsers = schema.com.domain['domain admins']
+  const members = []
 
-  function loopUsers(users) {
+  function loopUsers (users) {
     for (let k of Object.keys(users)) {
       if (!users[k].hasOwnProperty('type')) {
-        continue;
+        continue
       }
       if (!users[k].value.attributes.memberOf) {
-        continue;
+        continue
       }
       for (let g of users[k].value.attributes.memberOf) {
         if (g.attributes.cn.toLowerCase() === groupCN.toLowerCase()) {
-          members.push(users[k].value.attributes.cn);
+          members.push(users[k].value.attributes.cn)
         }
       }
     }
   }
 
-  loopUsers(domainUsers);
-  loopUsers(adminUsers);
+  loopUsers(domainUsers)
+  loopUsers(adminUsers)
 
-  return members;
-};
+  return members
+}
 
-module.exports = schema;
+module.exports = schema
