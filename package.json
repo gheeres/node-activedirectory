@@ -25,9 +25,9 @@
     "url": "https://github.com/jsumners/node-activedirectory/issues"
   },
   "dependencies": {
+    "abstract-logging": "^1.0.0",
     "async": "^2.1.4",
-    "ldapjs": "^1.0.1",
-    "winston": "^2.3.0"
+    "ldapjs": "^1.0.1"
   },
   "scripts": {
     "lint": "standard",
@@ -47,6 +47,7 @@
     "chai": "^3.5.0",
     "jsdoc": "^3.4.3",
     "mocha": "^3.2.0",
+    "pino": "^3.1.0",
     "pre-commit": "^1.2.2",
     "standard": "^8.6.0"
   }

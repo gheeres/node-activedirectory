@@ -18,20 +18,19 @@ ActiveDirectory uses the following additional node modules:
 
 + [async] - Async utilities for node and the browser
 + [ldapjs] - A pure JavaScript, from-scratch framework for implementing LDAP clients and servers in Node.js
-+ [winston](https://github.com/winstonjs/winston) - "...a simple and universal logging library with support for multiple transports"
 
 Installation
 --------------
 
 ```sh
-npm install activedirectory
+npm install activedirectory2
 ```
 
 Usage
 --------------
 
 ```js
-var ActiveDirectory = require('activedirectory');
+var ActiveDirectory = require('activedirectory2');
 var config = { url: 'ldap://dc.domain.com',
                baseDN: 'dc=domain,dc=com',
                username: 'username@domain.com',
@@ -64,7 +63,7 @@ A Promise wrapper is available for all methods by an alternate `require`
 statement:
 
 ```javascript
-const AD = require('activedirectory').promiseWrapper;
+const AD = require('activedirectory2').promiseWrapper;
 const config = { url: 'ldap://dc.domain.com',
                baseDN: 'dc=domain,dc=com',
                username: 'username@domain.com',
@@ -665,9 +664,17 @@ Currently supported ldapjs opts are:
   in lieu of url)
 + `tlsOptions` - additrional tls options (see ldapjs for more information)
 + `socketPath` - If you're running an LDAP server over a Unix Domain Socket, use this.
-+ `logging` - You can optionally pass in a winston instance the client will use for
-  logging. The client logs all messages at the "trace" level; this level is
-  patched in to the winston instance by the library.
++ `logging` - A logger that conforms to the [abstract-logging][abstract-logging]
+  interface. The library logs all messages at the "trace" level.
+  
+  ```js
+  const pino = require('pino')
+  const pretty = pino.pretty()
+  pretty.pipe(process.stdout)
+  const log = pino({level: 'trace'}, pretty)
+  const ad = new ActiveDirectory({logging: log})
+  ```
+  
 + `timeout` - How long the client should let operations live for before timing out.
   Default is Infinity.
 + `idleTimeout` - How long the client should wait before timing out on TCP connections.
@@ -694,6 +701,8 @@ Options for activedirectory.js:
   resulting ldap object. Examples include augmenting ldap data with external data
   from an RDBMs. `function onParse(entry, raw, callback) { callback(entry); }`
   If null is returned, the result is excluded.
+
+[abstract-logging]: https://www.npmjs.com/package/abstract-logging
 
 #### Example
 

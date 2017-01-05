@@ -19,7 +19,6 @@ const EventEmitter = require('events').EventEmitter
 const net = require('net')
 const tls = require('tls')
 const util = require('util')
-const winston = require('winston')
 const FakeDN = require('./FakeDN')
 const settings = require('../settings')
 const ldap = require('ldapjs')
@@ -27,20 +26,10 @@ const Protocol = require('ldapjs/lib/protocol')
 const errors = require('ldapjs/lib/errors')
 const connectionHandler = require('./connectionHandler')
 
-const logLevels = winston.config.npm.levels
-const logColors = winston.config.npm.colors
-logLevels.trace = 3
-logColors.trace = 'cyan'
-let log = new winston.Logger({
-  transports: [
-    new winston.transports.Console({level: 'info'})
-  ],
-  levels: logLevels,
-  colors: logColors
-})
-log.trace = function trace () {
-  log.log.apply(log, ['trace'].concat(Array.from(arguments)))
-}
+const pino = require('pino')
+const pretty = pino.pretty()
+pretty.pipe(process.stdout)
+let log = pino({level: 'info'}, pretty)
 
 let server
 
