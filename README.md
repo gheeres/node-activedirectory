@@ -11,14 +11,6 @@ ActiveDirectory is an ldapjs client for authN (authentication) and authZ (author
   - Recycle bin (tombstone) query support
   - Referral support
 
-Required Libraries
------------
-
-ActiveDirectory uses the following additional node modules:
-
-+ [async] - Async utilities for node and the browser
-+ [ldapjs] - A pure JavaScript, from-scratch framework for implementing LDAP clients and servers in Node.js
-
 Installation
 --------------
 
@@ -43,6 +35,7 @@ user and group lookup operations.
 
 Documentation
 --------------
++ [Constructor](#constructor)
 + [authenticate](#authenticate)
 + [isUserMemberOf](#isUserMemberOf)
 + [find](#find)
@@ -70,6 +63,78 @@ const config = { url: 'ldap://dc.domain.com',
                password: 'password' }
 const ad = new AD(config);
 ````
+
+---------------------------------------
+
+<a id="constructor"></a>
+### ActiveDirectory(options)
+
+Returns a new instance of the client configured according to the options object.
+
+Options:
+
++ `url` {string}: Active Directory server to connect to, e.g. `ldap://ad.example.com`.
++ `baseDN` {string}: The root DN from which all searches will be performed, e.g. `dc=example,dc=com`.
++ `username` {string}: An account name capbable of performing the operations desired.
++ `password` {string}: Password for the given `username`.
++ `pageSize` {integer}: Number of results for each page in a paged search. Default: `1000`.
++ `entryParser` {function}: A function that will be invoked to parse each search entry.
+  Signature: `function entryParser (entry, raw, callback) {}`. Optional.
++ `referrals` {object}: Specifies if referrals should be followed, and which to exclude
+  if so. Default:
+  
+  ```
+  {
+    enabled: false,
+    exclude: [
+      'ldaps?://ForestDnsZones\\..*/.*',
+      'ldaps?://DomainDnsZones\\..*/.*',
+      'ldaps?://.*/CN=Configuration,.*'
+    ]
+  }
+  ```
++ `attributes` {object}: Specifies which attributes to return for "user" or "group"
+  searches. Default:
+  
+  ```
+  {
+    user: [
+      'dn', 'distinguishedName',
+      'userPrincipalName', 'sAMAccountName', 'mail',
+      'lockoutTime', 'whenCreated', 'pwdLastSet', 'userAccountControl',
+      'employeeID', 'sn', 'givenName', 'initials', 'cn', 'displayName',
+      'comment', 'description'
+    ],
+    group: [
+      'dn', 'cn', 'description', 'distinguishedName', 'objectCategory'
+    ]
+  }
+  ```
+
+Any additional keys on the options object will be parsed to find
+[ldapjs options](http://ldapjs.org/client.html). The list of options
+`activedirectory2` parses as ldapjs options is:
+
++ url
++ host
++ port
++ secure
++ tlsOptions
++ socketPath
++ log
++ timeout
++ idleTimeout
++ reconnect
++ queue
++ queueSize
++ queueTimeout
++ queueDisable
++ bindDN (Default: `username`)
++ bindCredentials (Default: `password`)
++ connectTimeout
++ tlsOptions
++ strictDN
++ paged
 
 ---------------------------------------
 
@@ -652,33 +717,25 @@ ad.findUser(opts, 'userPrincipalName=bob@domain.com', function(err, user) {
 <a id="opts"></a>
 ### Optional Parameters / Extended Functionality
 
-Any method which takes an 'opts' parameter allows for additional options. Options
-for both activedirectory.js and the internal ldapjs client are supported.
+Any method which takes an `opts` parameter allows for additional options. Options
+for both `activedirectory2` and the internal ldapjs client are supported.
 
-Currently supported ldapjs opts are:
+Currently supported ldapjs options are:
 
 + `url` - a valid LDAP url.
-+ `host` - the host name to connect to (used with port in lieu of url)
-+ `port` - the port to connect to (used with hostname in lieu of url)
-+ `secure` - indicates if ldaps:// vs ldap:// is used. (used with hostname/port
-  in lieu of url)
-+ `tlsOptions` - additrional tls options (see ldapjs for more information)
-+ `socketPath` - If you're running an LDAP server over a Unix Domain Socket, use this.
-+ `logging` - A logger that conforms to the [abstract-logging][abstract-logging]
-  interface. The library logs all messages at the "trace" level.
-  
-  ```js
-  const pino = require('pino')
-  const pretty = pino.pretty()
-  pretty.pipe(process.stdout)
-  const log = pino({level: 'trace'}, pretty)
-  const ad = new ActiveDirectory({logging: log})
-  ```
-  
-+ `timeout` - How long the client should let operations live for before timing out.
++ `tlsOptions` - additional tls options (see ldapjs for more information).
++ `socketPath` - if you're running an LDAP server over a Unix Domain Socket, use this.
++ `log` - a logger instance that conforms to ldapjs's logger requirements.
++ `timeout` - how long in milliseconds the client should let operations live for before timing out.
   Default is Infinity.
-+ `idleTimeout` - How long the client should wait before timing out on TCP connections.
++ `idleTimeout` - how long the client should wait before timing out on TCP connections.
   Default is up to the OS.
++ `connectTimeout` - milliseconds client should wait before timing out on TCP connections. Default is OS default.
++ `strictDN` - force strict DN parsing for client methods. Default is true.
+  
+`activedirectory2` specific options are:
+
++ `baseDN` - The alternative baseDN to use than the one specified in the ctor.
 + `bindDN` - The DN all connections should be bound as.
 + `bindCredentials` - The credentials to use with bindDN.
 + `scope` - One of base, one, or sub. Defaults to base.
@@ -689,10 +746,6 @@ Currently supported ldapjs opts are:
 + `sizeLimit` - the maximum number of entries to return. Defaults to 0 (unlimited).
 + `timeLimit` - the maximum amount of time the server should take in responding,
   in seconds. Defaults to 10. Lots of servers will ignore this.
-
-Options for activedirectory.js:
-
-+ `baseDN` - The alternative baseDN to use than the one specified in the ctor.
 + `includeMembership` - Indicates that a search or find operation should enumerate
   the group memberships of the specified result types. Supported values are [ 'user', 'group', 'all' ].
 + `includeDeleted` - Indicates that results should include tombstoned / deleted
@@ -701,6 +754,16 @@ Options for activedirectory.js:
   resulting ldap object. Examples include augmenting ldap data with external data
   from an RDBMs. `function onParse(entry, raw, callback) { callback(entry); }`
   If null is returned, the result is excluded.
++ `logging` - A logger that conforms to the [abstract-logging][abstract-logging]
+  interface. The library logs all messages at the "trace" level.
+  
+  ```js
+  const pino = require('pino')
+  const pretty = pino.pretty()
+  pretty.pipe(process.stdout)
+  const log = pino({level: 'trace'}, pretty)
+  const ad = new ActiveDirectory({logging: log})
+  ```
 
 [abstract-logging]: https://www.npmjs.com/package/abstract-logging
 

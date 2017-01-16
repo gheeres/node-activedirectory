@@ -27,12 +27,6 @@ describe('ctor method', function () {
     done()
   })
 
-  it('should set opts.maxConnections = 20', function (done) {
-    const ad = new ActiveDirectory(config)
-    expect(ad.opts.maxConnections).to.equal(20)
-    done()
-  })
-
   it('should replace default user attributes if specified', function (done) {
     const ad = new ActiveDirectory(Object.assign({}, config, {
       attributes: {
@@ -76,6 +70,18 @@ describe('ctor method', function () {
       server = s
       doTest()
     })
+  })
+
+  it('should parse ldapjs options into the opts property', function (done) {
+    const ad = new ActiveDirectory(Object.assign({}, config, {
+      tlsOptions: {foo: 'bar'},
+      paged: true
+    }))
+
+    expect(ad.opts.paged).to.be.true
+    expect(ad.opts.tlsOptions).to.exist
+    expect(ad.opts.tlsOptions.foo).to.equal('bar')
+    done()
   })
 })
 

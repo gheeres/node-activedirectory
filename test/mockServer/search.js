@@ -4,6 +4,7 @@ const schema = require('./schema')
 const domainUsers = schema.com.domain['domain users']
 const domainAdmins = schema.com.domain['domain admins']
 const baseDN = 'dc=domain,dc=com'
+const SearchEntry = require('ldapjs/lib/messages/search_entry')
 
 // This is the star of the mockServer show. This method handles all of the
 // LDAP search queries issued by the ActiveDirectory client. Each type
@@ -67,7 +68,7 @@ module.exports = function search (server, settings) {
       // sAMAccountName filter
       username = (username.indexOf(')')) ? username.split(')')[0] : username
       const user = getUser(username)
-      res.send(user)
+      res.send(user || new SearchEntry())
       res.end()
       return
     }
