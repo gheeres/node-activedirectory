@@ -61,8 +61,7 @@ Documentation
 
 ---------------------------------------
 
-<a name="authenticate" />
-### authenticate(username, password, callback)
+### `authenticate(username, password, callback)`
 
 Authenticates the username and password by doing a simple bind with the specified credentials.
 
@@ -96,8 +95,7 @@ ad.authenticate(username, password, function(err, auth) {
 
 ---------------------------------------
 
-<a name="isUserMemberOf" />
-### isUserMemberOf(opts, username, groupName, callback)
+### `isUserMemberOf(opts, username, groupName, callback)`
 
 Checks to see if a user is a member of the specified group. This function will also check for group membership inside of a group.  Even if a user is not explicity listed as a member of a particular group, if a group that the user is a member of belongs to the group, then this function will return true.
 
@@ -126,8 +124,7 @@ var ad.isUserMemberOf(username, groupName, function(err, isMember) {
 
 ---------------------------------------
 
-<a name="groupExists" />
-### groupExists(opts, groupName, callback)
+### `groupExists(opts, groupName, callback)`
 
 Checks to see if the specified group exists.
 
@@ -154,8 +151,7 @@ ad.groupExists(groupName, function(err, exists) {
 
 ---------------------------------------
 
-<a name="userExists" />
-### userExists(opts, username, callback)
+### `userExists(opts, username, callback)`
 
 Checks to see if the specified user exists.
 
@@ -182,8 +178,7 @@ ad.userExists(username, function(err, exists) {
 
 ---------------------------------------
 
-<a name="getUsersForGroup" />
-### getUsersForGroup(opts, groupName, callback)
+### `getUsersForGroup(opts, groupName, callback)`
 
 For the specified group, retrieve all of the users that belong to the group. If the group contains groups, then the members of those groups are recursively retrieved as well to build a complete list of users that belong to the specified group.
 
@@ -214,8 +209,7 @@ ad.getUsersForGroup(groupName, function(err, users) {
 
 ---------------------------------------
 
-<a name="getGroupMembershipForUser" />
-### getGroupMembershipForUser(opts, username, callback)
+### `getGroupMembershipForUser(opts, username, callback)`
 
 For the specified username, retrieve all of the groups that a user belongs to. If a retrieved group is a member of another group, then that group is recursively retrieved as well to build a complete hierarchy of groups that a user belongs to.
 
@@ -243,8 +237,7 @@ ad.getGroupMembershipForUser(sAMAccountName, function(err, groups) {
 
 ---------------------------------------
 
-<a name="getGroupMembershipForGroup" />
-### getGroupMembershipForGroup(opts, groupName, callback)
+### `getGroupMembershipForGroup(opts, groupName, callback)`
 
 For the specified group, retrieve all of the groups that the group is a member of. If a retrieved group is a member of another group, then that group is recursively retrieved as well to build a complete hierarchy of groups that a user belongs to.
 
@@ -272,8 +265,7 @@ ad.getGroupMembershipForGroup(groupName, function(err, groups) {
 
 ---------------------------------------
 
-<a name="find" />
-### find(opts, callback)
+### `find(opts, callback)`
 
 Perform a generic search for the specified LDAP query filter. This function will return both
 groups and users that match the specified filter. Any results not recognized as a user or group
@@ -319,8 +311,7 @@ ad.find(query, function(err, results) {
 
 ---------------------------------------
 
-<a name="findDeletedObjects" />
-### findDeletedObjects(opts, callback)
+### `findDeletedObjects(opts, callback)`
 
 If tombstoning (recycle bin) is enabled for the Active Directory installation, use findDeletedObjects to retrieve
 items in the recycle bin.
@@ -360,8 +351,7 @@ ad.findDeletedObjects(opts, function(err, result) {
 
 ---------------------------------------
 
-<a name="findUser" />
-### findUser(opts, username, callback)
+### `findUser(opts, username, callback)`
 
 Looks up or finds a username by their sAMAccountName, userPrincipalName, distinguishedName (dn) or custom filter. If found, the returned object contains all of the requested attributes. By default, the following attributes are returned:
 
@@ -396,8 +386,7 @@ ad.findUser(sAMAccountName, function(err, user) {
 
 ---------------------------------------
 
-<a name="findUsers" />
-### findUsers(opts, callback)
+### `findUsers(opts, callback)`
 
 Perform a generic search for users that match the specified filter. The default LDAP filter for users is
 specified as (&(|(objectClass=user)(objectClass=person))(!(objectClass=computer))(!(objectClass=group)))
@@ -427,8 +416,7 @@ ad.findUsers(query, function(err, users) {
 
 ---------------------------------------
 
-<a name="findGroup" />
-### findGroup(opts, groupName, callback)
+### `findGroup(opts, groupName, callback)`
 
 Looks up or find a group by common name (CN) which is required to be unique in Active Directory or optionally by the distinguished name. Supports groups with range retrieval specifiers. The following attributes are returned by default for the group:
 
@@ -466,8 +454,7 @@ ad.findGroup(groupName, function(err, group) {
 
 ---------------------------------------
 
-<a name="findGroups" />
-### findGroups(opts, callback)
+### `findGroups(opts, callback)`
 
 Perform a generic search for groups that match the specified filter. The default LDAP filter for groups is
 specified as (&(objectClass=group)(!(objectClass=computer))(!(objectClass=user))(!(objectClass=person)))
@@ -497,8 +484,7 @@ ad.findGroups(query, function(err, groups) {
 
 ---------------------------------------
 
-<a name="getRootDSE" />
-### getRootDSE(url, attributes, callback)
+### `getRootDSE(url, attributes, callback)`
 
 Retrieves the root DSE for the specified url. Can be called statically.
 
@@ -637,7 +623,6 @@ ad.findUser(opts, 'userPrincipalName=bob@domain.com', function(err, user) {
 });
 ```
  
-<a name="opts" />
 ### Optional Parameters / Extended Functionality
 
 Any method which takes an 'opts' parameter allows for additional options. Options for both activedirectory.js
