@@ -65,6 +65,14 @@ module.exports = {
         'My Users', 'VPN Users', 'Authors'
       ]
     }, {
+      dn: 'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',
+      sAMAccountName: 'celeb',
+      userPrincipalName: 'celeb@domain.com',
+      // The list of groups (commonName) that this user is a member of.
+      members: [
+        'grpa', 'grpb'
+      ]
+    }, {
       dn: 'CN=Web Administrator,OU=Domain Admins,DC=domain,DC=com',
       sAMAccountName: 'webadmin',
       userPrincipalName: 'webadmin@domain.com',

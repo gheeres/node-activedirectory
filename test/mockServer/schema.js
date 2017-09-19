@@ -35,7 +35,7 @@ schema.com.domain['domain groups'] = {
   'VPN Users',
   'Web Administrator', 'Yet Another Group',
   'Budget Director', 'Accounts Receivable Director',
-  'Editors', 'Contributors', 'Web Editors', 'Web Users'
+  'Editors', 'Contributors', 'Web Editors', 'Web Users', 'grpa', 'grpb'
 ].forEach((n) => {
   schema.com.domain['domain groups'][n.toLowerCase()] = {
     type: 'cn',
@@ -117,6 +117,14 @@ schema.com.domain['domain groups']['web editors']
 schema.com.domain['domain groups']['web users']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['authors'].value
+  )
+schema.com.domain['domain groups']['grpa']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['grpb'].value
+  )
+schema.com.domain['domain groups']['grpb']
+  .value.attributes.memberOf.push(
+    schema.com.domain['domain groups']['grpa'].value
   )
 
 // Other
@@ -319,6 +327,18 @@ schema.com.domain['domain users'] = {
       'ardirector',
       'Domain Users',
       ['accounts receivable director']
+    )
+  },
+
+  'celebrity circular': {
+    type: 'cn',
+    value: createUserObject(
+      'Celebrity',
+      'Circular',
+      'CC',
+      'celeb',
+      'Domain Users',
+      ['grpa']
     )
   }
 }
