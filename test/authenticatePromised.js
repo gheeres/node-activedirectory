@@ -1,5 +1,6 @@
 'use strict'
-/* eslint-env mocha, chai */
+/* eslint-env node, mocha */
+/* eslint-disable no-unused-expressions */
 
 const expect = require('chai').expect
 const ActiveDirectory = require('../index').promiseWrapper
@@ -64,7 +65,7 @@ describe('Promised Authentication', function () {
           done()
         })
         .catch((err) => {
-          expect(err).to.be.an.object
+          expect(err).to.be.an('object')
           expect(err.code).to.exist
           expect(err.code).to.equal(LDAP_INVALID_CREDENTIALS)
           done()
@@ -78,7 +79,7 @@ describe('Promised Authentication', function () {
           done()
         })
         .catch((err) => {
-          expect(err).to.be.an.object
+          expect(err).to.be.an('object')
           expect(err.code).to.exist
           expect(err.code).to.equal(LDAP_INVALID_CREDENTIALS)
           done()
@@ -92,7 +93,7 @@ describe('Promised Authentication', function () {
           done()
         })
         .catch((err) => {
-          expect(err).to.be.an.object
+          expect(err).to.be.an('object')
           expect(err.code).to.exist
           expect(err.code).to.equal(LDAP_INVALID_CREDENTIALS)
           done()
@@ -100,4 +101,3 @@ describe('Promised Authentication', function () {
     })
   })
 })
-

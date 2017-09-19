@@ -1,5 +1,6 @@
 'use strict'
-/* eslint-env mocha, chai */
+/* eslint-env node, mocha */
+/* eslint-disable no-unused-expressions */
 
 const expect = require('chai').expect
 const ActiveDirectory = require('../index')
@@ -111,4 +112,3 @@ describe('getUsersForGroup method', function () {
     })
   })
 })
-

@@ -1,5 +1,6 @@
 'use strict'
-/* eslint-env mocha, chai */
+/* eslint-env node, mocha */
+/* eslint-disable no-unused-expressions */
 
 const expect = require('chai').expect
 const ActiveDirectory = require('../index')
@@ -22,7 +23,7 @@ describe('Attributes', function () {
 
   function validateAllAttrs (err, user, done) {
     expect(err).to.be.null
-    expect(user).to.be.an.object
+    expect(user).to.be.an('object')
 
     const attributes = Object.keys(user)
     expect(attributes.length).to.be.greaterThan(defaultAttributes.length)
@@ -33,7 +34,7 @@ describe('Attributes', function () {
     ad = new ActiveDirectory(config)
     ad.findUser(settings.username.userPrincipalName, function (err, user) {
       expect(err).to.be.null
-      expect(user).to.be.an.object
+      expect(user).to.be.an('object')
 
       const attributes = Object.keys(user)
       expect(attributes.length).be.at.least(defaultAttributes.length)
@@ -89,4 +90,3 @@ describe('Attributes', function () {
     })
   })
 })
-
