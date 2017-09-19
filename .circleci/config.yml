@@ -1,38 +1,37 @@
 version: 2
 
 references:
-  prepare_for_run: &prepare_for_run
-    - checkout
-    - run:
-        name: update-npm
-        command: 'sudo npm install -g npm@latest'
-    - restore_cache:
-        key: dependency-cache-{{ checksum "package.json" }}
-    - run:
-        name: install-dependencies
-        command: npm install
-    - save_cache:
-        key: dependency-cache-{{ checksum "package.json" }}
-        paths:
-          - ./node_modules
-
-  run_lint_test: &run_lint_test
-    - run:
-        name: lint
-        command: npm lint
-    - run:
-        name: test
-        command: npm test
+  common_steps: &common_steps
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: lint
+          command: npm lint
+      - run:
+          name: test
+          command: npm test
 
 jobs:
   node6:
     docker:
       - image: node:6
     steps:
-      <<: [ *prepare_for_run, *run_lint_test ]
+      <<: [ *common_steps ]
 
   node8:
     docker:
       - image: node:8
     steps:
-      <<: [ *prepare_for_run, *run_lint_test ]
+      <<: [ *common_steps ]
