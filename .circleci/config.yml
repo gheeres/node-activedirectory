@@ -4,9 +4,9 @@ references:
   common_steps: &common_steps
     steps:
       - checkout
-      - run:
-          name: update-npm
-          command: 'npm install -g npm@latest'
+      # - run:
+      #     name: update-npm
+      #     command: 'npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - run:
