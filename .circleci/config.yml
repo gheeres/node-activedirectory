@@ -33,3 +33,12 @@ jobs:
     docker:
       - image: node:8
     <<: [ *common_steps ]
+
+workflows:
+  version: 2
+  stupid_cirlceci:
+    # Evidently CircleCI can't cope with unique job
+    # names unless workflows are used.
+    jobs:
+      - node6
+      - node8
