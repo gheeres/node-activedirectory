@@ -1,6 +1,8 @@
 ActiveDirectory for Node
 =========
 
+[![CircleCI](https://circleci.com/gh/jsumners/node-activedirectory.svg?style=svg)](https://circleci.com/gh/jsumners/node-activedirectory)
+
 ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations. This code was a port of an existing C# library (not published) that I had written a few years ago. Here are the key features
 
   - Authenticate
@@ -82,7 +84,7 @@ Options:
   Signature: `function entryParser (entry, raw, callback) {}`. Optional.
 + `referrals` {object}: Specifies if referrals should be followed, and which to exclude
   if so. Default:
-  
+
   ```
   {
     enabled: false,
@@ -95,7 +97,7 @@ Options:
   ```
 + `attributes` {object}: Specifies which attributes to return for "user" or "group"
   searches. Default:
-  
+
   ```
   {
     user: [
@@ -732,7 +734,7 @@ Currently supported ldapjs options are:
   Default is up to the OS.
 + `connectTimeout` - milliseconds client should wait before timing out on TCP connections. Default is OS default.
 + `strictDN` - force strict DN parsing for client methods. Default is true.
-  
+
 `activedirectory2` specific options are:
 
 + `baseDN` - The alternative baseDN to use than the one specified in the ctor.
@@ -756,7 +758,7 @@ Currently supported ldapjs options are:
   If null is returned, the result is excluded.
 + `logging` - A logger that conforms to the [abstract-logging][abstract-logging]
   interface. The library logs all messages at the "trace" level.
-  
+
   ```js
   const pino = require('pino')
   const pretty = pino.pretty()
