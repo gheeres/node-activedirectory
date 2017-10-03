@@ -219,7 +219,7 @@ describe('find Method', function () {
 
     it('should return err (ConnectionError) when connection timeouts', function (done) {
       new ActiveDirectory({
-        url: 'ldap://google.com',
+        url: 'ldap://example.com',
         connectTimeout: 100
       }).find({}, function (err, result) {
         expect(err).to.be.an.instanceOf(ldapjs.ConnectionError)
