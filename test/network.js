@@ -37,7 +37,7 @@ describe('Network Connections', function () {
 
     it('should return err (ConnectionError) when connection timeouts', function (done) {
       const ad = new ActiveDirectory({
-        url: 'ldap://google.com',
+        url: 'ldap://example.com',
         connectTimeout: 1
       })
       ad.authenticate(username, password, function (err, auth) {
