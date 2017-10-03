@@ -3,6 +3,7 @@
 /* eslint-disable no-unused-expressions */
 
 const expect = require('chai').expect
+const ldapjs = require('ldapjs')
 const ActiveDirectory = require('../index')
 const config = require('./config')
 
@@ -212,6 +213,17 @@ describe('find Method', function () {
           })
         })
 
+        done()
+      })
+    })
+
+    it('should return err (ConnectionError) when connection timeouts', function (done) {
+      new ActiveDirectory({
+        url: 'ldap://example.com',
+        connectTimeout: 100
+      }).find({}, function (err, result) {
+        expect(err).to.be.an.instanceOf(ldapjs.ConnectionError)
+        expect(result).to.be.undefined
         done()
       })
     })
