@@ -1,3 +1,9 @@
+### See Releases Page ###
+
+Starting with v1.2.2, you can find the changes listed on
+the [GitHub releases](https://github.com/jsumners/node-activedirectory/releases)
+page.
+
 ### 1.2.0
 + Update dependencies
 + Switch code style to standardjs.com style
