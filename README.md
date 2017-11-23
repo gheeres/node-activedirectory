@@ -456,7 +456,7 @@ ad.findGroup(groupName, function(err, group) {
     return;
   }
 
-  if (! user) console.log('Group: ' + groupName + ' not found.');
+  if (! group) console.log('Group: ' + groupName + ' not found.');
   else {
     console.log(group);
     console.log('Members: ' + (group.member || []).length);
