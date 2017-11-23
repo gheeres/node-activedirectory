@@ -114,7 +114,7 @@ var username = 'user@domain.com';
 var groupName = 'Employees';
 
 var ad = new ActiveDirectory(config);
-var ad.isUserMemberOf(username, groupName, function(err, isMember) {
+ad.isUserMemberOf(username, groupName, function(err, isMember) {
   if (err) {
     console.log('ERROR: ' +JSON.stringify(err));
     return;
@@ -456,7 +456,7 @@ ad.findGroup(groupName, function(err, group) {
     return;
   }
 
-  if (! user) console.log('Group: ' + groupName + ' not found.');
+  if (! group) console.log('Group: ' + groupName + ' not found.');
   else {
     console.log(group);
     console.log('Members: ' + (group.member || []).length);
