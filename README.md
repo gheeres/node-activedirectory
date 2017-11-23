@@ -114,7 +114,7 @@ var username = 'user@domain.com';
 var groupName = 'Employees';
 
 var ad = new ActiveDirectory(config);
-var ad.isUserMemberOf(username, groupName, function(err, isMember) {
+ad.isUserMemberOf(username, groupName, function(err, isMember) {
   if (err) {
     console.log('ERROR: ' +JSON.stringify(err));
     return;
