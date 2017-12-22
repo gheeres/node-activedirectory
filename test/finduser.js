@@ -149,5 +149,31 @@ describe('findUser Method', function () {
         done()
       })
     })
+
+    // https://github.com/jsumners/node-activedirectory/issues/26
+    it('should return unique users', function (done) {
+      let count = 0
+      // The bug was triggered by using a common options object. The method
+      // was creating a pointer to this object and then not updating its
+      // internal reference on subsequent calls (because it was already defined).
+      const opts = {}
+      function findUser (user, cb) {
+        ad.findUser(opts, user, function (err, user) {
+          count += 1
+          if (err) done(err)
+          cb(user)
+        })
+      }
+
+      findUser('username', (result) => {
+        expect(result.sAMAccountName).to.equal('username')
+        if (count === 2) done()
+      })
+
+      findUser('username1', (result) => {
+        expect(result.sAMAccountName).to.equal('username1')
+        if (count === 2) done()
+      })
+    })
   })
 })

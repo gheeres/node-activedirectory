@@ -28,6 +28,7 @@
     "abstract-logging": "^1.0.0",
     "async": "^2.5.0",
     "ldapjs": "^1.0.1",
+    "merge-options": "^1.0.0",
     "snazzy": "^7.0.0"
   },
   "scripts": {
