@@ -8,6 +8,7 @@
 // the schema easier. They are defined at the end of this file.
 
 const RDN = require('ldapjs/lib/dn').RDN
+const utilities = require('./utilities')
 
 const groupCategory = 'CN=Group,CN=Schema,CN=Configuration,DC=domain,DC=com'
 const personCategory = 'CN=Person,CN=Schema,CN=Configuration,DC=domain,DC=com'
@@ -155,6 +156,7 @@ function createUserObject (firstName, lastName, initials, username, ou, groups) 
   const user = {
     dn: `CN=${firstName} ${lastName},OU=${ou},DC=domain,DC=com`,
     attributes: {
+      objectSid: utilities.generateSid(),
       userPrincipalName: `${username}@domain.com`,
       sAMAccountName: username,
       domainUsername: `DOMAIN\\${username}`,
