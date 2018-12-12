@@ -3,8 +3,7 @@
 /* eslint-disable no-unused-expressions */
 
 const expect = require('chai').expect
-const path = require('path')
-const RangeAttribute = require(path.join(__dirname, '..', 'lib', 'client', 'RangeAttribute'))
+const RangeAttribute = require('./../lib/client/RangeAttribute')
 
 describe('Range Attribute Class', function () {
   it('should return determine if ranges are present', function (done) {
