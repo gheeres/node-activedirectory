@@ -59,6 +59,23 @@ describe('findGroups Method', function () {
         done()
       })
     })
+
+    it('should return default group attributes when no filter is specified', function (done) {
+      const defaultAttributes = ActiveDirectory.defaultAttributes.group
+      ad.findGroups({}, function (err, groups) {
+        expect(err).to.be.null
+        expect(groups).to.not.be.null
+        expect(Array.isArray(groups)).to.be.true
+
+        groups.forEach((group) => {
+          const attributes = Object.keys(group)
+          expect(attributes.length).to.be.lte(defaultAttributes.length)
+          expect(attributes).to.be.any.members(defaultAttributes)
+        })
+
+        done()
+      })
+    })
   })
 
   describe('#findGroups(opts)', function () {
