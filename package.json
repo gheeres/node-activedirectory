@@ -28,8 +28,7 @@
     "abstract-logging": "^1.0.0",
     "async": "^2.5.0",
     "ldapjs": "^1.0.1",
-    "merge-options": "^1.0.0",
-    "snazzy": "^7.0.0"
+    "merge-options": "^1.0.0"
   },
   "scripts": {
     "lint": "standard | snazzy",
@@ -51,6 +50,7 @@
     "mocha": "^3.5.3",
     "pino": "^4.7.2",
     "pre-commit": "^1.2.2",
+    "snazzy": "^7.0.0",
     "standard": "^10.0.3"
   }
 }
