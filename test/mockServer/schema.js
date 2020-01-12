@@ -98,45 +98,45 @@ schema.com.domain['domain groups']['yet another group']
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my group'].value
   )
-schema.com.domain['domain groups']['authors']
+schema.com.domain['domain groups'].authors
   .value.attributes.memberOf.push(
     schema.com.domain['domain groups']['my group'].value
   )
 
-schema.com.domain['domain groups']['editors']
+schema.com.domain['domain groups'].editors
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['authors'].value
+    schema.com.domain['domain groups'].authors.value
   )
-schema.com.domain['domain groups']['contributors']
+schema.com.domain['domain groups'].contributors
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['authors'].value
+    schema.com.domain['domain groups'].authors.value
   )
 schema.com.domain['domain groups']['web editors']
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['authors'].value
+    schema.com.domain['domain groups'].authors.value
   )
 schema.com.domain['domain groups']['web users']
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['authors'].value
+    schema.com.domain['domain groups'].authors.value
   )
-schema.com.domain['domain groups']['grpa']
+schema.com.domain['domain groups'].grpa
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['grpb'].value
+    schema.com.domain['domain groups'].grpb.value
   )
-schema.com.domain['domain groups']['grpb']
+schema.com.domain['domain groups'].grpb
   .value.attributes.memberOf.push(
-    schema.com.domain['domain groups']['grpa'].value
+    schema.com.domain['domain groups'].grpa.value
   )
 
 // Other
-schema.com.domain['other'] = {
+schema.com.domain.other = {
   type: 'ou'
 };
 [
   'parking-computer-01', 'parking-computer-02',
   'security-test-01', 'security-test-02', 'security-audit-01'
 ].forEach((item) => {
-  schema.com.domain['other'][item.toLowerCase()] = {
+  schema.com.domain.other[item.toLowerCase()] = {
     type: 'cn',
     value: {
       dn: `CN=${item},OU=Other,DC=domain,DC=com`,
@@ -379,7 +379,7 @@ schema.getByRDN = function getByRDN (rdn) {
   }
 
   let result = schema
-  for (let p of path) {
+  for (const p of path) {
     result = result[p]
   }
 
@@ -396,8 +396,8 @@ schema.filter = function filter (query) {
 
   const results = []
   function loop (object, property, value) {
-    for (let k of Object.keys(object)) {
-      if (!object[k].hasOwnProperty('type')) {
+    for (const k of Object.keys(object)) {
+      if (!Object.prototype.hasOwnProperty.call(object[k], 'type')) {
         continue
       }
       const item = object[k].value
@@ -413,7 +413,7 @@ schema.filter = function filter (query) {
   loop(schema.com.domain['domain admins'], parts[0], parts[1])
   loop(schema.com.domain['domain groups'], parts[0], parts[1])
   loop(schema.com.domain['distribution lists'], parts[0], parts[1])
-  loop(schema.com.domain['other'], parts[0], parts[1])
+  loop(schema.com.domain.other, parts[0], parts[1])
 
   return results
 }
@@ -425,12 +425,12 @@ schema.find = function find (query) {
   const lists = schema.com.domain['distribution lists']
   const users = schema.com.domain['domain users']
   const admins = schema.com.domain['domain admins']
-  const other = schema.com.domain['other']
+  const other = schema.com.domain.other
 
   const results = []
   function loop (object, type) {
-    for (let k of Object.keys(object)) {
-      if (!object[k].hasOwnProperty('type')) {
+    for (const k of Object.keys(object)) {
+      if (!Object.prototype.hasOwnProperty.call(object[k], 'type')) {
         continue
       }
       if (k.indexOf(_query) !== -1) {
@@ -474,14 +474,14 @@ schema.getGroupMembers = function getGroupMembers (groupCN) {
   const members = []
 
   function loopUsers (users) {
-    for (let k of Object.keys(users)) {
-      if (!users[k].hasOwnProperty('type')) {
+    for (const k of Object.keys(users)) {
+      if (!Object.prototype.hasOwnProperty.call(users[k], 'type')) {
         continue
       }
       if (!users[k].value.attributes.memberOf) {
         continue
       }
-      for (let g of users[k].value.attributes.memberOf) {
+      for (const g of users[k].value.attributes.memberOf) {
         if (g.attributes.cn.toLowerCase() === groupCN.toLowerCase()) {
           members.push(users[k].value.attributes.cn)
         }

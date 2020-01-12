@@ -66,7 +66,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should include groups/membership if opts.includeMembership[] = [ \'all\' ]', t => {
     const user = settings.users[0]
     const opts = {
-      includeMembership: [ 'all' ],
+      includeMembership: ['all'],
       filter: user.query
     }
     t.context.ad.findUsers(opts, function (err, users) {
@@ -85,7 +85,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should include groups/membership if opts.includeMembership[] = [ \'user\' ]', t => {
     const user = settings.users[0]
     const opts = {
-      includeMembership: [ 'user' ],
+      includeMembership: ['user'],
       filter: user.query
     }
     t.context.ad.findUsers(opts, function (err, users) {
@@ -123,7 +123,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should return only requested attributes', t => {
     const user = settings.users[0]
     const opts = {
-      attributes: [ 'cn' ],
+      attributes: ['cn'],
       filter: user.query
     }
     t.context.ad.findUsers(opts, function (err, users) {

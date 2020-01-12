@@ -34,18 +34,18 @@ module.exports = function search (server, settings) {
 
     function getUser (username) {
       const users = []
-      for (let key of Object.keys(domainAdmins)) {
+      for (const key of Object.keys(domainAdmins)) {
         if (key !== 'type') {
           users.push(domainAdmins[key].value)
         }
       }
-      for (let key of Object.keys(domainUsers)) {
+      for (const key of Object.keys(domainUsers)) {
         if (key !== 'type') {
           users.push(domainUsers[key].value)
         }
       }
       let result
-      for (let user of users) {
+      for (const user of users) {
         if (user.attributes.sAMAccountName === username) {
           result = user
           break
@@ -130,12 +130,12 @@ module.exports = function search (server, settings) {
 
       let groups
       const keys = Object.keys(schema.com.domain['domain groups'])
-      for (let k of keys) {
+      for (const k of keys) {
         const g = schema.com.domain['domain groups'][k]
-        if (!g.hasOwnProperty('type')) {
+        if (!Object.prototype.hasOwnProperty.call(g, 'type')) {
           continue
         }
-        if (!g.value.attributes.hasOwnProperty('memberOf')) {
+        if (!Object.prototype.hasOwnProperty.call(g.value.attributes, 'memberOf')) {
           continue
         }
         g.value.attributes.memberOf.forEach((sg) => {

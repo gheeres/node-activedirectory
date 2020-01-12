@@ -53,7 +53,7 @@ tap.test('#getGroupMembershipForUser()', t => {
   })
 
   t.test('should return default group attributes when not specified', t => {
-    const defaultAttributes = [ 'objectCategory', 'distinguishedName', 'cn', 'description' ]
+    const defaultAttributes = ['objectCategory', 'distinguishedName', 'cn', 'description']
     const user = settings.users[0]
     t.context.ad.getGroupMembershipForUser(user.userPrincipalName, function (err, groups) {
       t.error(err)
@@ -76,7 +76,7 @@ tap.test('#getGroupMembershipForUser()', t => {
 tap.test('#getGroupMembershipForUser(opts)', t => {
   t.test('should return only requested attributes', t => {
     const opts = {
-      attributes: [ 'createTimeStamp' ]
+      attributes: ['createTimeStamp']
     }
     const user = settings.users[0]
 

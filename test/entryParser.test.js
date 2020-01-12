@@ -6,7 +6,6 @@ const config = require('./config')
 const serverFactory = require('./mockServer')
 
 tap.test('entryParser', t => {
-  let ad
   const settings = require('./settings').findUser
 
   t.beforeEach((done, t) => {

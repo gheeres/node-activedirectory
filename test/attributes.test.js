@@ -42,7 +42,7 @@ tap.test('Attributes', t => {
       const attributes = Object.keys(user)
       t.true(attributes.length >= defaultAttributes.length)
 
-      for (let attr of attributes) {
+      for (const attr of attributes) {
         t.true(defaultAttributes.includes(attr))
       }
 
@@ -54,7 +54,7 @@ tap.test('Attributes', t => {
     const connectionConfig = config(t.context.server.port)
     const localConfig = Object.assign({}, connectionConfig, {
       attributes: {
-        user: [ '*' ]
+        user: ['*']
       }
     })
     t.context.ad = new ActiveDirectory(localConfig)
@@ -67,7 +67,7 @@ tap.test('Attributes', t => {
     const connectionConfig = config(t.context.server.port)
     const localConfig = Object.assign({}, connectionConfig, {
       attributes: {
-        user: [ ]
+        user: []
       }
     })
     t.context.ad = new ActiveDirectory(localConfig)
@@ -78,7 +78,7 @@ tap.test('Attributes', t => {
 
   t.test('when opts.attributes contains a wildcard, should return all attributes', t => {
     const opts = {
-      attributes: [ '*' ]
+      attributes: ['*']
     }
     const connectionConfig = config(t.context.server.port)
     t.context.ad = new ActiveDirectory(connectionConfig)
@@ -89,7 +89,7 @@ tap.test('Attributes', t => {
 
   t.test('when opts.attributes is empty array, should return all attributes', t => {
     const opts = {
-      attributes: [ ]
+      attributes: []
     }
     const connectionConfig = config(t.context.server.port)
     t.context.ad = new ActiveDirectory(connectionConfig)

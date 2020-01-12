@@ -47,7 +47,7 @@ tap.test('ctor method', t => {
     const localConfig = config(t.context.server.port)
     t.context.ad = new ActiveDirectory(Object.assign({}, localConfig, {
       attributes: {
-        user: [ 'mycustomuserattribute' ]
+        user: ['mycustomuserattribute']
       }
     }))
     const defaultAttributes = t.context.ad.defaultAttributes || {}
@@ -60,7 +60,7 @@ tap.test('ctor method', t => {
     const localConfig = config(t.context.server.port)
     t.context.ad = new ActiveDirectory(Object.assign({}, localConfig, {
       attributes: {
-        group: [ 'mycustomgroupattribute' ]
+        group: ['mycustomgroupattribute']
       }
     }))
     const defaultAttributes = t.context.ad.defaultAttributes || {}
@@ -86,7 +86,7 @@ tap.test('ctor method', t => {
   t.test('should parse ldapjs options into the opts property', t => {
     const localConfig = config(t.context.server.port)
     t.context.ad = new ActiveDirectory(Object.assign({}, localConfig, {
-      tlsOptions: {enableTrace: false},
+      tlsOptions: { enableTrace: false },
       paged: true
     }))
 
