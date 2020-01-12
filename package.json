@@ -32,6 +32,7 @@
   },
   "scripts": {
     "lint": "standard | snazzy",
+    "lint:ci": "standard",
     "test": "tap --no-coverage-report",
     "test:ci": "tap",
     "doc": "jsdoc -c jsdoc.json"
