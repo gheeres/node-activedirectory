@@ -6,7 +6,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [ '10', '12', '13' ]
+        node:
+          - '10'
+          - '12'
+          # - '13'
     name: Node ${{ matrix.node }}
     steps:
       - uses: actions/checkout@v1
