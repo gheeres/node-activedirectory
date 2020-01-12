@@ -4,8 +4,6 @@ const tap = require('tap')
 const ActiveDirectory = require('../index').promiseWrapper
 const config = require('./config')
 const serverFactory = require('./mockServer')
-
-let ad
 const settings = require('./settings').findGroup
 
 tap.beforeEach((done, t) => {
@@ -24,7 +22,7 @@ tap.afterEach((done, t) => {
 })
 
 tap.test('#findGroup()', t => {
-  [ 'cn', 'dn' ].forEach((groupAttribute) => {
+  ['cn', 'dn'].forEach((groupAttribute) => {
     const groupName = settings.groupName[groupAttribute]
     t.test(`should return user for (${groupAttribute} ${groupName}`, t => {
       return t.context.ad.findGroup(settings.groupName[groupAttribute])
@@ -73,7 +71,7 @@ tap.test('#findGroup(opts)', t => {
 
   t.test('should include groups/membership if opts.includeMembership[] = [ \'all\' ]', t => {
     const opts = {
-      includeMembership: [ 'all' ]
+      includeMembership: ['all']
     }
     return t.context.ad.findGroup(opts, settings.groupName.dn)
       .then((group) => {
@@ -88,7 +86,7 @@ tap.test('#findGroup(opts)', t => {
 
   t.test('should include groups/membership if opts.includeMembership[] = [ \'group\' ]', t => {
     const opts = {
-      includeMembership: [ 'group' ]
+      includeMembership: ['group']
     }
     return t.context.ad.findGroup(opts, settings.groupName.dn)
       .then((group) => {
@@ -103,7 +101,7 @@ tap.test('#findGroup(opts)', t => {
 
   t.test('should return expected groups/membership if opts.includeMembership enabled', t => {
     const opts = {
-      includeMembership: [ 'group', 'all' ]
+      includeMembership: ['group', 'all']
     }
     return t.context.ad.findGroup(opts, settings.groupName.dn)
       .then((group) => {
@@ -130,7 +128,7 @@ tap.test('#findGroup(opts)', t => {
 
   t.test('should return only requested attributes', t => {
     const opts = {
-      attributes: [ 'createdTimestamp' ]
+      attributes: ['createdTimestamp']
     }
     return t.context.ad.findGroup(opts, settings.groupName.dn)
       .then((group) => {
@@ -144,4 +142,3 @@ tap.test('#findGroup(opts)', t => {
 
   t.end()
 })
-

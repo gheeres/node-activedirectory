@@ -22,7 +22,7 @@ tap.afterEach((done, t) => {
 })
 
 tap.test('#findUser()', t => {
-  [ 'userPrincipalName', 'sAMAccountName', 'dn' ].forEach((userAttribute) => {
+  ['userPrincipalName', 'sAMAccountName', 'dn'].forEach((userAttribute) => {
     const username = settings.username[userAttribute]
     t.test(`should return user for (${userAttribute}) ${username}`, t => {
       return t.context.ad.findUser(username)
@@ -68,7 +68,7 @@ tap.test('#findUser(opts)', t => {
 
   t.test('should include groups/membership if opts.includeMembership[] = [ \'all\' ]', t => {
     const opts = {
-      includeMembership: [ 'all' ]
+      includeMembership: ['all']
     }
     const username = settings.username.userPrincipalName
     return t.context.ad.findUser(opts, username)
@@ -84,7 +84,7 @@ tap.test('#findUser(opts)', t => {
 
   t.test('should include groups/membership if opts.includeMembership[] = [ \'user\' ]', t => {
     const opts = {
-      includeMembership: [ 'user' ]
+      includeMembership: ['user']
     }
     const username = settings.username.userPrincipalName
     return t.context.ad.findUser(opts, username)
@@ -100,7 +100,7 @@ tap.test('#findUser(opts)', t => {
 
   t.test('should return expected groups/membership if opts.includeMembership enabled', t => {
     const opts = {
-      includeMembership: [ 'user', 'all' ]
+      includeMembership: ['user', 'all']
     }
     const username = settings.username.userPrincipalName
     return t.context.ad.findUser(opts, username)
@@ -128,7 +128,7 @@ tap.test('#findUser(opts)', t => {
 
   t.test('should return only requested attributes', t => {
     const opts = {
-      attributes: [ 'cn' ]
+      attributes: ['cn']
     }
     const username = settings.username.userPrincipalName
     return t.context.ad.findUser(opts, username)

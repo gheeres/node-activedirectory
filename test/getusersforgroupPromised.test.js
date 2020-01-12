@@ -84,7 +84,7 @@ tap.test('#getUsersForGroup()', t => {
 tap.test('#getUsersForGroup(opts)', t => {
   t.test('should return only requested attributes', t => {
     const opts = {
-      attributes: [ 'createTimeStamp' ]
+      attributes: ['createTimeStamp']
     }
     const group = settings.groups[0]
     return t.context.ad.getUsersForGroup(opts, group.dn)
@@ -97,7 +97,6 @@ tap.test('#getUsersForGroup(opts)', t => {
           t.equal(keys.length, opts.attributes.length)
           keys.forEach((k) => t.true(opts.attributes.includes(k)))
         })
-
       })
       .catch(t.error)
   })

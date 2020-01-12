@@ -38,7 +38,7 @@ module.exports = {
   },
   // Test settings for getGroupMembershipForGroup
   getGroupMembershipForGroup: {
-    groups: [ {
+    groups: [{
       dn: 'CN=My Users,OU=Domain Groups,DC=domain,DC=com',
       cn: 'My Users',
       // The list of groups (commonName) that this group is a member of.
@@ -52,11 +52,11 @@ module.exports = {
       members: [
         'Editors', 'Contributors', 'Web Editors', 'Web Users'
       ]
-    } ]
+    }]
   },
   // Test settings for getGroupMembershipForUser
   getGroupMembershipForUser: {
-    users: [ {
+    users: [{
       dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
       sAMAccountName: 'username',
       userPrincipalName: 'username@domain.com',
@@ -80,11 +80,11 @@ module.exports = {
       members: [
         'My Users', 'Web Administrator', 'Domain Admins'
       ]
-    } ]
+    }]
   },
   // Test settings for getGroupMembershipForGroup
   getUsersForGroup: {
-    groups: [ {
+    groups: [{
       dn: 'CN=All Users,OU=Distribution Lists,DC=domain,DC=com',
       cn: 'All Users',
       // The list of users (dn) that are members of this group.
@@ -100,47 +100,7 @@ module.exports = {
       users: [
         'CN=First Last Name #1,OU=Domain Users,DC=domain,DC=com'
       ]
-    }, {
-      dn: 'CN=Editors,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'Editors',
-      // The list of users (dn) that are members of this group.
-      users: [
-        'CN=Wendy Writer,OU=Domain Users,DC=domain,DC=com'
-      ]
-    }, {
-      dn: 'CN=Contributors,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'Contributors',
-      // The list of users (dn) that are members of this group.
-      users: [
-        'CN=Hank Shareman,OU=Domain Users,DC=domain,DC=com'
-      ]
-    }, {
-      dn: 'CN=Authors,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'Authors',
-      // The list of users (dn) that are members of this group.
-      // test if getUsersForGroup will dive into subgroups
-      users: [
-        'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',  // direct member of Authors
-        'CN=Wendy Writer,OU=Domain Users,DC=domain,DC=com',     // member of subgroup editors
-        'CN=Hank Shareman,OU=Domain Users,DC=domain,DC=com'     // member of subgroup conributors
-      ]
-    }, {
-      dn: 'CN=grpa,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'grpa',
-      // test if getUsersForGroup will dive into subgroups but not circle forever
-      users: [
-        'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',  // direct member of grpa
-        'CN=CelebrityB CircularB,OU=Domain Users,DC=domain,DC=com' // member of subgroup grpb
-      ]
-    }, {
-      dn: 'CN=grpb,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'grpb',
-      // test if getUsersForGroup will dive into subgroups but not circle forever
-      users: [
-        'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',  // member of subgroup grpa
-        'CN=CelebrityB CircularB,OU=Domain Users,DC=domain,DC=com' // direct member of grpb
-      ]
-    } ]
+    }]
   },
   // Test settings for findUser
   findUser: {
@@ -155,8 +115,8 @@ module.exports = {
     ],
     opts: {
       custom: '(userPrincipalName=anotheruser@domain.com)', // Make sure this user is different than the one specified
-                                                            // in username.userPrincipalName
-      multipleFilter: '(CN=Smith*)'                        // Ensure this query returns more than one user.
+      // in username.userPrincipalName
+      multipleFilter: '(CN=Smith*)' // Ensure this query returns more than one user.
     }
   },
   // Test settings for findGroup
@@ -169,13 +129,13 @@ module.exports = {
       'Another Group', 'Yet Another Group', 'Authors'
     ],
     opts: {
-      custom: '(cn=Budget Users)',                           // Make sure this user is different than the one specified
-                                                             // in groupname.cn
+      custom: '(cn=Budget Users)', // Make sure this user is different than the one specified
+      // in groupname.cn
       multipleFilter: '(&(objectCategory=Group)(cn=Admin*))' // Ensure this query returns more than one user.
     }
   },
   findUsers: {
-    users: [ {
+    users: [{
       query: 'CN=Smith*',
       results: [
         'John Smith', 'Bob Smith'
@@ -193,10 +153,10 @@ module.exports = {
       },
       results: [
       ]
-    } ]
+    }]
   },
   findGroups: {
-    groups: [ {
+    groups: [{
       query: 'CN=My Group*',
       results: [
         'My Group', 'My Group #1', 'My Group #2'
@@ -221,10 +181,10 @@ module.exports = {
       query: 'userPrincipalName=pattendant1@domain.com',
       results: [
       ]
-    } ]
+    }]
   },
   find: {
-    queries: [ {
+    queries: [{
       query: 'CN=Parking*',
       results: {
         users: [
@@ -251,6 +211,6 @@ module.exports = {
           'security-test-01', 'security-test-02', 'security-audit-01'
         ]
       }
-    } ]
+    }]
   }
 }

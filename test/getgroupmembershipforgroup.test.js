@@ -72,7 +72,7 @@ tap.test('#getGroupMembershipForGroup()', t => {
 tap.test('#getGroupMembershipForGroup(opts)', t => {
   t.test('should return only requested attributes', t => {
     const opts = {
-      attributes: [ 'createTimeStamp' ]
+      attributes: ['createTimeStamp']
     }
     const group = settings.groups[0]
     t.context.ad.getGroupMembershipForGroup(opts, group.dn, function (err, groups) {

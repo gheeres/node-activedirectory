@@ -54,7 +54,7 @@ tap.test('#findUsers()', t => {
           attributes.forEach(attr => t.true(defaultAttributes.includes(attr)))
         })
       })
-    .catch(t.error)
+      .catch(t.error)
   })
 
   t.end()
@@ -64,7 +64,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should include groups/membership if opts.includeMembership[] = [ \'all\' ]', t => {
     const user = settings.users[0]
     const opts = {
-      includeMembership: [ 'all' ],
+      includeMembership: ['all'],
       filter: user.query
     }
     return t.context.ad.findUsers(opts)
@@ -82,7 +82,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should include groups/membership if opts.includeMembership[] = [ \'user\' ]', t => {
     const user = settings.users[0]
     const opts = {
-      includeMembership: [ 'user' ],
+      includeMembership: ['user'],
       filter: user.query
     }
     return t.context.ad.findUsers(opts)
@@ -118,7 +118,7 @@ tap.test('#findUsers(opts)', t => {
   t.test('should return only requested attributes', t => {
     const user = settings.users[0]
     const opts = {
-      attributes: [ 'cn' ],
+      attributes: ['cn'],
       filter: user.query
     }
     return t.context.ad.findUsers(opts)

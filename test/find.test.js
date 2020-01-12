@@ -47,8 +47,8 @@ tap.test('#find()', t => {
           expectedResults.forEach((expectedResult) => {
             const filteredResults = cns.filter((cn) => {
               return cn
-                    .toLowerCase()
-                    .indexOf(expectedResult.toLowerCase()) !== -1
+                .toLowerCase()
+                .indexOf(expectedResult.toLowerCase()) !== -1
             })
             t.is(filteredResults.length, 1)
           })
@@ -73,7 +73,7 @@ tap.test('#find()', t => {
       t.error(err)
       t.type(results, 'object')
 
-      const keys =  ['users', 'groups', 'other']
+      const keys = ['users', 'groups', 'other']
       for (const key of keys) {
         const keyAttributes = defaultAttributes[key]
         results[key].forEach((result) => {
@@ -96,22 +96,22 @@ tap.test('#find(opts)', t => {
   t.test('should include groups/membership groups and users if opts.includeMembership[] = [ \'all\' ]', t => {
     const query = settings.queries[0]
     const opts = {
-      includeMembership: [ 'all' ],
+      includeMembership: ['all'],
       filter: query.query
     }
     t.context.ad.find(opts, function (err, results) {
       t.error(err)
       t.type(results, 'object')
 
-      results['users'].forEach((user) => {
+      results.users.forEach((user) => {
         t.ok(user.groups)
       })
 
-      results['groups'].forEach((group) => {
+      results.groups.forEach((group) => {
         t.ok(group.groups)
       })
 
-      results['other'].forEach((other) => {
+      results.other.forEach((other) => {
         t.notOk(other.groups)
       })
 
@@ -122,14 +122,14 @@ tap.test('#find(opts)', t => {
   t.test('should include groups/membership for groups if opts.includeMembership[] = [ \'group\' ]', t => {
     const query = settings.queries[0]
     const opts = {
-      includeMembership: [ 'group' ],
+      includeMembership: ['group'],
       filter: query.query
     }
     t.context.ad.find(opts, function (err, results) {
       t.error(err)
       t.type(results, 'object')
 
-      results['groups'].forEach((group) => {
+      results.groups.forEach((group) => {
         t.ok(group.groups)
       });
 
@@ -147,14 +147,14 @@ tap.test('#find(opts)', t => {
   t.test('should include groups/membership for users if opts.includeMembership[] = [ \'user\' ]', t => {
     const query = settings.queries[0]
     const opts = {
-      includeMembership: [ 'user' ],
+      includeMembership: ['user'],
       filter: query.query
     }
     t.context.ad.find(opts, function (err, results) {
       t.error(err)
       t.type(results, 'object')
 
-      results['users'].forEach((user) => {
+      results.users.forEach((user) => {
         t.ok(user.groups)
       });
 
@@ -194,7 +194,7 @@ tap.test('#find(opts)', t => {
   t.test('should return only requested attributes', t => {
     const query = settings.queries[0]
     const opts = {
-      attributes: [ 'cn' ],
+      attributes: ['cn'],
       filter: query.query
     }
     t.context.ad.find(opts, function (err, results) {
@@ -229,4 +229,3 @@ tap.test('#find(opts)', t => {
 
   t.end()
 })
-
