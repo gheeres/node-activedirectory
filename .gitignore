@@ -9,3 +9,5 @@ samples
 node_modules
 npm-debug.log
 tests
+.nyc_output/
+coverage/
