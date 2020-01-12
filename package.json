@@ -27,7 +27,7 @@
   "dependencies": {
     "abstract-logging": "^2.0.0",
     "async": "^3.1.0",
-    "ldapjs": "^1.0.1",
+    "ldapjs": "^2.0.0-pre.5",
     "merge-options": "^2.0.0"
   },
   "scripts": {
