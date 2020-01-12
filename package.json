@@ -25,10 +25,10 @@
     "url": "https://github.com/jsumners/node-activedirectory/issues"
   },
   "dependencies": {
-    "abstract-logging": "^1.0.0",
-    "async": "^2.5.0",
+    "abstract-logging": "^2.0.0",
+    "async": "^3.1.0",
     "ldapjs": "^1.0.1",
-    "merge-options": "^1.0.0"
+    "merge-options": "^2.0.0"
   },
   "scripts": {
     "lint": "standard | snazzy",
