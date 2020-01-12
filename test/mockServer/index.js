@@ -25,11 +25,13 @@ const ldap = require('ldapjs')
 const Protocol = require('ldapjs/lib/protocol')
 const errors = require('ldapjs/lib/errors')
 const connectionHandler = require('./connectionHandler')
-const authenticationFactory = require('./authentication')
-const searchFactory = require('./search')
 
 const pino = require('pino')
-let log = pino({ level: 'info' })
+const pretty = pino.pretty()
+pretty.pipe(process.stdout)
+let log = pino({level: 'info'}, pretty)
+
+let server
 
 // We have to re-implement the whole constructor because we can't modify
 // its internal connection listener. And we need to do that so that we can
@@ -222,16 +224,24 @@ Server.prototype._mount = function (op, name, argv) {
   return this
 }
 
+function initServer (cb) {
+  require('./authentication')(server, settings)
+  require('./search')(server, settings)
+
+  server.listen(1389, '127.0.0.1', function () {
+    console.log('server running: %s', server.url)
+    cb(server)
+  })
+}
+
 module.exports = function (cb) {
-  const server = new Server({
+  if (server) {
+    return cb(server)
+  }
+
+  server = new Server({
     strictDN: false,
     log: log
   })
-
-  authenticationFactory(server, settings)
-  searchFactory(server, settings)
-
-  server.listen(0, '127.0.0.1', function (err) {
-    cb(err, server)
-  })
+  initServer(cb)
 }

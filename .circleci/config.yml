@@ -1,0 +1,44 @@
+version: 2
+
+references:
+  common_steps: &common_steps
+    steps:
+      - checkout
+      # - run:
+      #     name: update-npm
+      #     command: 'npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: install-dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - ./node_modules
+      - run:
+          name: lint
+          command: npm run lint
+      - run:
+          name: test
+          command: npm run test
+
+jobs:
+  node6:
+    docker:
+      - image: node:6
+    <<: [ *common_steps ]
+
+  node8:
+    docker:
+      - image: node:8
+    <<: [ *common_steps ]
+
+workflows:
+  version: 2
+  stupid_cirlceci:
+    # Evidently CircleCI can't cope with unique job
+    # names unless workflows are used.
+    jobs:
+      - node6
+      - node8
