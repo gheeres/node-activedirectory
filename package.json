@@ -1,7 +1,7 @@
 {
   "author": "George Heeres <gheeres@gmail.com>",
   "name": "activedirectory2",
-  "version": "1.3.0",
+  "version": "2.0.0-pre.1",
   "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations.",
   "contributors": [
     {
@@ -25,14 +25,16 @@
     "url": "https://github.com/jsumners/node-activedirectory/issues"
   },
   "dependencies": {
-    "abstract-logging": "^1.0.0",
-    "async": "^2.5.0",
-    "ldapjs": "^1.0.1",
-    "merge-options": "^1.0.0"
+    "abstract-logging": "^2.0.0",
+    "async": "^3.1.0",
+    "ldapjs": "^2.0.0-pre.5",
+    "merge-options": "^2.0.0"
   },
   "scripts": {
     "lint": "standard | snazzy",
-    "test": "mocha --ui bdd test",
+    "lint:ci": "standard",
+    "test": "tap --no-coverage-report",
+    "test:ci": "tap",
     "doc": "jsdoc -c jsdoc.json"
   },
   "precommit": [
@@ -45,12 +47,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "chai": "^4.1.2",
     "jsdoc": "^3.5.5",
-    "mocha": "^3.5.3",
-    "pino": "^4.7.2",
+    "pino": "^5.16.0",
     "pre-commit": "^1.2.2",
-    "snazzy": "^7.0.0",
-    "standard": "^10.0.3"
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1",
+    "tap": "^14.10.5"
   }
 }

@@ -23,7 +23,7 @@ function setupConnection (c) {
     c.remotePort = c.socket.remotePort
   }
 
-  var rdn = new dn.RDN({cn: 'anonymous'})
+  var rdn = new dn.RDN({ cn: 'anonymous' })
 
   c.ldap = {
     id: c.remoteAddress + ':' + c.remotePort,
