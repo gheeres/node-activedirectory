@@ -29,9 +29,7 @@ const authenticationFactory = require('./authentication')
 const searchFactory = require('./search')
 
 const pino = require('pino')
-const pretty = pino.pretty()
-pretty.pipe(process.stdout)
-let log = pino({level: 'info'}, pretty)
+let log = pino({level: 'info'})
 
 // We have to re-implement the whole constructor because we can't modify
 // its internal connection listener. And we need to do that so that we can

@@ -47,10 +47,10 @@
   "license": "MIT",
   "devDependencies": {
     "jsdoc": "^3.5.5",
-    "pino": "^4.7.2",
+    "pino": "^5.16.0",
     "pre-commit": "^1.2.2",
-    "snazzy": "^7.0.0",
-    "standard": "^10.0.3",
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1",
     "tap": "^14.10.5"
   }
 }
