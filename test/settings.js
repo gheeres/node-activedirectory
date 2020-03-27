@@ -100,6 +100,46 @@ module.exports = {
       users: [
         'CN=First Last Name #1,OU=Domain Users,DC=domain,DC=com'
       ]
+    }, {
+      dn: 'CN=Editors,OU=Domain Groups,DC=domain,DC=com',
+      cn: 'Editors',
+      // The list of users (dn) that are members of this group.
+      users: [
+        'CN=Wendy Writer,OU=Domain Users,DC=domain,DC=com'
+      ]
+    }, {
+      dn: 'CN=Contributors,OU=Domain Groups,DC=domain,DC=com',
+      cn: 'Contributors',
+      // The list of users (dn) that are members of this group.
+      users: [
+        'CN=Hank Shareman,OU=Domain Users,DC=domain,DC=com'
+      ]
+    }, {
+      dn: 'CN=Authors,OU=Domain Groups,DC=domain,DC=com',
+      cn: 'Authors',
+      // The list of users (dn) that are members of this group.
+      // test if getUsersForGroup will dive into subgroups
+      users: [
+        'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',  // direct member of Authors
+        'CN=Wendy Writer,OU=Domain Users,DC=domain,DC=com',     // member of subgroup editors
+        'CN=Hank Shareman,OU=Domain Users,DC=domain,DC=com'     // member of subgroup conributors
+      ]
+    }, {
+      dn: 'CN=grpa,OU=Domain Groups,DC=domain,DC=com',
+      cn: 'grpa',
+      // test if getUsersForGroup will dive into subgroups but not circle forever
+      users: [
+        'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',  // direct member of grpa
+        'CN=CelebrityB CircularB,OU=Domain Users,DC=domain,DC=com' // member of subgroup grpb
+      ]
+    }, {
+      dn: 'CN=grpb,OU=Domain Groups,DC=domain,DC=com',
+      cn: 'grpb',
+      // test if getUsersForGroup will dive into subgroups but not circle forever
+      users: [
+        'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',  // member of subgroup grpa
+        'CN=CelebrityB CircularB,OU=Domain Users,DC=domain,DC=com' // direct member of grpb
+      ]
     } ]
   },
   // Test settings for findUser
