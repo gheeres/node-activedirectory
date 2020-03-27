@@ -525,7 +525,7 @@ schema.getGroupMembers = function getGroupMembers (groupCN) {
     }
   }
 
-  function loopSubgroups(cn) {
+  function loopSubgroups (cn) {
     for (let k of Object.keys(schema.com.domain['domain groups'])) {
       const g = schema.com.domain['domain groups'][k]
       if (!g.hasOwnProperty('type')) {
