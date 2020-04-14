@@ -9,7 +9,7 @@ const password = 'password'
 tap.test('#authenticate()', t => {
   t.test('should return err (ENOTFOUND) on invalid hostname (dns)', t => {
     const ad = new ActiveDirectory({
-      url: 'ldap://invalid.domain.net'
+      url: 'ldap://invalid.domain.💩'
     })
     ad.authenticate(username, password, function (err, auth) {
       t.type(err, Error)

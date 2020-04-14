@@ -347,36 +347,36 @@ schema.com.domain['domain users'] = {
   'celebrityb circularb': {
     type: 'cn',
     value: createUserObject(
-        'CelebrityB',
-        'CircularB',
-        'CBCB',
-        'celebb',
-        'Domain Users',
-        ['grpb']
+      'CelebrityB',
+      'CircularB',
+      'CBCB',
+      'celebb',
+      'Domain Users',
+      ['grpb']
     )
   },
 
   'wendy writer': {
     type: 'cn',
     value: createUserObject(
-        'Wendy',
-        'Writer',
-        'WW',
-        'wewri',
-        'Domain Users',
-        ['editors']
+      'Wendy',
+      'Writer',
+      'WW',
+      'wewri',
+      'Domain Users',
+      ['editors']
     )
   },
 
   'hank shareman': {
     type: 'cn',
     value: createUserObject(
-        'Hank',
-        'Shareman',
-        'HS',
-        'hshare',
-        'Domain Users',
-        ['contributors']
+      'Hank',
+      'Shareman',
+      'HS',
+      'hshare',
+      'Domain Users',
+      ['contributors']
     )
   }
 }
@@ -526,15 +526,15 @@ schema.getGroupMembers = function getGroupMembers (groupCN) {
   }
 
   function loopSubgroups (cn) {
-    for (let k of Object.keys(schema.com.domain['domain groups'])) {
+    for (const k of Object.keys(schema.com.domain['domain groups'])) {
       const g = schema.com.domain['domain groups'][k]
-      if (!g.hasOwnProperty('type')) {
+      if (Object.prototype.hasOwnProperty.call(g, 'type') === false) {
         continue
       }
-      if (!g.value.attributes.hasOwnProperty('memberOf')) {
+      if (Object.prototype.hasOwnProperty.call(g.value.attributes, 'memberOf') === false) {
         continue
       }
-      for (let gs of g.value.attributes.memberOf) {
+      for (const gs of g.value.attributes.memberOf) {
         if (gs.attributes.cn.toLowerCase() === groupCN.toLowerCase()) {
           members.push(g.value.dn)
         }
