@@ -4,14 +4,6 @@ const tap = require('tap')
 const utilities = require('../lib/components/utilities')
 
 tap.test('Utility functions', t => {
-  t.beforeEach((done, t) => {
-    done()
-  })
-
-  t.afterEach((done, t) => {
-    done()
-  })
-
   t.test('parseDistinguishedName', t => {
     t.test('handling commas which are no component separators inside DNs', t => {
       const input = 'CN=Doe\\, John (Test),OU=Technicians,OU=Users,OU=Local Resources,OU=DEDUS,DC=abc,DC=dom'
