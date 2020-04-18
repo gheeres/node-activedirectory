@@ -342,6 +342,42 @@ schema.com.domain['domain users'] = {
       'Domain Users',
       ['grpa']
     )
+  },
+
+  'celebrityb circularb': {
+    type: 'cn',
+    value: createUserObject(
+        'CelebrityB',
+        'CircularB',
+        'CBCB',
+        'celebb',
+        'Domain Users',
+        ['grpb']
+    )
+  },
+
+  'wendy writer': {
+    type: 'cn',
+    value: createUserObject(
+        'Wendy',
+        'Writer',
+        'WW',
+        'wewri',
+        'Domain Users',
+        ['editors']
+    )
+  },
+
+  'hank shareman': {
+    type: 'cn',
+    value: createUserObject(
+        'Hank',
+        'Shareman',
+        'HS',
+        'hshare',
+        'Domain Users',
+        ['contributors']
+    )
   }
 }
 
@@ -489,8 +525,26 @@ schema.getGroupMembers = function getGroupMembers (groupCN) {
     }
   }
 
+  function loopSubgroups (cn) {
+    for (let k of Object.keys(schema.com.domain['domain groups'])) {
+      const g = schema.com.domain['domain groups'][k]
+      if (!g.hasOwnProperty('type')) {
+        continue
+      }
+      if (!g.value.attributes.hasOwnProperty('memberOf')) {
+        continue
+      }
+      for (let gs of g.value.attributes.memberOf) {
+        if (gs.attributes.cn.toLowerCase() === groupCN.toLowerCase()) {
+          members.push(g.value.dn)
+        }
+      }
+    }
+  }
+
   loopUsers(domainUsers)
   loopUsers(adminUsers)
+  loopSubgroups()
 
   return members
 }
