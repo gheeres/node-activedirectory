@@ -46,7 +46,7 @@ function decodeDN (req, strict) {
       break
     case Protocol.LDAP_REQ_MODRDN:
       req.entry = parse(req.entry)
-    // TODO: handle newRdn/Superior
+      // TODO: handle newRdn/Superior
       break
     case Protocol.LDAP_REQ_SEARCH:
       req.baseObject = parse(req.baseObject)
@@ -87,7 +87,7 @@ function onMessage (req) {
     log.debug('%s: message received: req=%j', this.ldap.id, req.json)
   }
 
-  let res = getResponse(req)
+  const res = getResponse(req)
   if (!res) {
     log.warn('Unimplemented server method: %s', req.type)
     this.destroy()
@@ -156,7 +156,7 @@ function onMessage (req) {
 
 function connectionHandler (c) {
   setupConnection(server, log, options)(c)
-  c.parser = new Parser({log})
+  c.parser = new Parser({ log })
 
   c.on('data', onData.bind(c))
   c.parser.on('error', onError.bind(c))
