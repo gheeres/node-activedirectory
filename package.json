@@ -27,7 +27,7 @@
   "dependencies": {
     "abstract-logging": "^2.0.0",
     "async": "^3.1.0",
-    "ldapjs": "^2.0.0-pre.5",
+    "ldapjs": "^2.1.0",
     "merge-options": "^2.0.0"
   },
   "scripts": {
@@ -47,11 +47,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "jsdoc": "^3.5.5",
-    "pino": "^5.16.0",
+    "jsdoc": "^3.6.5",
+    "pino": "^6.4.1",
     "pre-commit": "^1.2.2",
     "snazzy": "^8.0.0",
-    "standard": "^14.3.1",
-    "tap": "^14.10.5"
+    "standard": "^14.3.4",
+    "tap": "^14.10.8"
   }
 }
