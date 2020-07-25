@@ -1,3 +1,7 @@
+doc/
+tester.js
+wallaby.js
+
 .project
 .idea
 
@@ -5,3 +9,5 @@ samples
 node_modules
 npm-debug.log
 tests
+.nyc_output/
+coverage/

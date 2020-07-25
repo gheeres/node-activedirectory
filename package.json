@@ -1,34 +1,57 @@
 {
   "author": "George Heeres <gheeres@gmail.com>",
-  "name": "activedirectory",
-  "version": "0.7.2",
+  "name": "activedirectory2",
+  "version": "2.0.0-pre.2",
   "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations.",
+  "contributors": [
+    {
+      "name": "James Sumners",
+      "email": "james.sumners@gmail.com",
+      "url": "http://jrfom.com"
+    }
+  ],
   "main": "index.js",
   "directories": {
     "lib": "./lib"
   },
   "engines": {
-    "node": ">=0.8"
+    "node": ">=4.0"
   },
   "keywords": [
     "ldap",
     "active directory"
   ],
   "bugs": {
-    "url": "https://github.com/gheeres/node-activedirectory/issues"
+    "url": "https://github.com/jsumners/node-activedirectory/issues"
   },
   "dependencies": {
-    "async": ">= 0.1.22",
-    "bunyan": ">= 1.3.5",
-    "ldapjs": ">= 0.7.1",
-    "underscore": ">= 1.4.3"
+    "abstract-logging": "^2.0.0",
+    "async": "^3.1.0",
+    "ldapjs": "^2.0.0-pre.5",
+    "merge-options": "^2.0.0"
   },
+  "scripts": {
+    "lint": "standard | snazzy",
+    "lint:ci": "standard",
+    "test": "tap --no-coverage-report",
+    "test:ci": "tap",
+    "doc": "jsdoc -c jsdoc.json"
+  },
+  "precommit": [
+    "lint",
+    "test"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/gheeres/node-activedirectory.git"
+    "url": "https://github.com/jsumners/node-activedirectory.git"
   },
   "license": "MIT",
   "devDependencies": {
-    "mocha": "^2.2.5"
+    "jsdoc": "^3.5.5",
+    "pino": "^5.16.0",
+    "pre-commit": "^1.2.2",
+    "snazzy": "^8.0.0",
+    "standard": "^14.3.1",
+    "tap": "^14.10.5"
   }
 }

@@ -4,9 +4,9 @@ module.exports = {
     username: {
       userPrincipalName: 'username@domain.com',
       domainUsername: 'DOMAIN\\username',
-      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
+      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com'
     },
-    password: 'password'  
+    password: 'password'
   },
   // Test settings for isUserMemberOf
   isUserMemberOf: {
@@ -16,7 +16,7 @@ module.exports = {
     groupName: {
       dn: 'CN=My Users,OU=Domain Groups,DC=domain,DC=com',
       cn: 'My Users',
-      // CN or DN of an indirect or nested group membership. 
+      // CN or DN of an indirect or nested group membership.
       // (i.e. member of a group that contains a group that the user is a member of)
       nested: 'My Nested Users'
     }
@@ -38,96 +38,104 @@ module.exports = {
   },
   // Test settings for getGroupMembershipForGroup
   getGroupMembershipForGroup: {
-    groups: [ { 
+    groups: [{
       dn: 'CN=My Users,OU=Domain Groups,DC=domain,DC=com',
       cn: 'My Users',
       // The list of groups (commonName) that this group is a member of.
-      members: [ 
+      members: [
         'VPN Users', 'Web Users'
       ]
     }, {
       dn: 'CN=Authors,OU=Domain Groups,DC=domain,DC=com',
       cn: 'Authors',
       // The list of groups (commonName) that this group is a member of.
-      members: [ 
+      members: [
         'Editors', 'Contributors', 'Web Editors', 'Web Users'
       ]
-    } ]
+    }]
   },
   // Test settings for getGroupMembershipForUser
   getGroupMembershipForUser: {
-    users: [ { 
-      dn: 'First Last Name,OU=Domain Users,DC=domain,DC=com',
+    users: [{
+      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
       sAMAccountName: 'username',
       userPrincipalName: 'username@domain.com',
       // The list of groups (commonName) that this user is a member of.
-      members: [ 
+      members: [
         'My Users', 'VPN Users', 'Authors'
+      ]
+    }, {
+      dn: 'CN=Celebrity Circular,OU=Domain Users,DC=domain,DC=com',
+      sAMAccountName: 'celeb',
+      userPrincipalName: 'celeb@domain.com',
+      // The list of groups (commonName) that this user is a member of.
+      members: [
+        'grpa', 'grpb'
       ]
     }, {
       dn: 'CN=Web Administrator,OU=Domain Admins,DC=domain,DC=com',
       sAMAccountName: 'webadmin',
       userPrincipalName: 'webadmin@domain.com',
       // The list of groups (commonName) that this user is a member of.
-      members: [ 
+      members: [
         'My Users', 'Web Administrator', 'Domain Admins'
       ]
-    } ]
+    }]
   },
   // Test settings for getGroupMembershipForGroup
   getUsersForGroup: {
-    groups: [ { 
+    groups: [{
       dn: 'CN=All Users,OU=Distribution Lists,DC=domain,DC=com',
       cn: 'All Users',
       // The list of users (dn) that are members of this group.
-      users: [ 
+      users: [
         'CN=First Last Name #1,OU=Domain Users,DC=domain,DC=com',
         'CN=First Last Name #2,OU=Domain Users,DC=domain,DC=com',
-        'CN=First Last Name #3,OU=Domain Users,DC=domain,DC=com',
+        'CN=First Last Name #3,OU=Domain Users,DC=domain,DC=com'
       ]
     }, {
       dn: 'CN=Budget Users,OU=Domain Groups,DC=domain,DC=com',
       cn: 'Budget Users',
       // The list of users (dn) that are members of this group.
-      users: [ 
-        'CN=First Last Name #1,OU=Domain Users,DC=domain,DC=com',
+      users: [
+        'CN=First Last Name #1,OU=Domain Users,DC=domain,DC=com'
       ]
-    } ]
+    }]
   },
   // Test settings for findUser
   findUser: {
     username: {
       userPrincipalName: 'username@domain.com',
       sAMAccountName: 'username',
-      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com',
+      dn: 'CN=First Last Name,OU=Domain Users,DC=domain,DC=com'
     },
     // The list of groups that this user is a member of
-    groups: [ 
+    groups: [
       'My Users', 'Authors'
     ],
     opts: {
       custom: '(userPrincipalName=anotheruser@domain.com)', // Make sure this user is different than the one specified
-                                                            // in username.userPrincipalName
-      multipleFilter: '(CN=Smith*)'                        // Ensure this query returns more than one user.
+      // in username.userPrincipalName
+      multipleFilter: '(CN=Smith*)' // Ensure this query returns more than one user.
     }
   },
   // Test settings for findGroup
   findGroup: {
     groupName: {
       dn: 'CN=My Group,OU=Domain Groups,DC=domain,DC=com',
-      cn: 'My Group',
+      cn: 'My Group'
     },
     groups: [
       'Another Group', 'Yet Another Group', 'Authors'
     ],
     opts: {
-      custom: '(cn=Budget Users)',                           // Make sure this user is different than the one specified
-                                                             // in groupname.cn
+      custom: '(cn=Budget Users)', // Make sure this user is different than the one specified
+      // in groupname.cn
       multipleFilter: '(&(objectCategory=Group)(cn=Admin*))' // Ensure this query returns more than one user.
     }
   },
   findUsers: {
-    users: [ {
+    users: [{
       query: 'CN=Smith*',
       results: [
         'John Smith', 'Bob Smith'
@@ -145,37 +153,38 @@ module.exports = {
       },
       results: [
       ]
-    } ]
+    }]
   },
   findGroups: {
-    groups: [ { 
+    groups: [{
       query: 'CN=My Group*',
       results: [
-        'My Group #1', 'My Group #2'
-      ],
+        'My Group', 'My Group #1', 'My Group #2'
+      ]
     }, {
       // A custom query that includes users, should only return group results.
       query: {
         filter: 'CN=*Director*'
       },
       results: [
-        'All Directors', 'System Directors'
+        'All Directors', 'System Directors',
+        'Budget Director', 'Accounts Receivable Director'
       ]
     }, {
       query: 'CN=Account - *',
       results: [
         'Account - Department #1', 'Account - Department #2',
         'Account - Department #3', 'Account - Department #4'
-      ],
+      ]
     }, {
       // A custom query that returns no groups
-      query: 'userPrincipalName=username@domain.com',
+      query: 'userPrincipalName=pattendant1@domain.com',
       results: [
       ]
-    } ]
+    }]
   },
   find: {
-    queries: [ { 
+    queries: [{
       query: 'CN=Parking*',
       results: {
         users: [
@@ -190,7 +199,7 @@ module.exports = {
       }
     }, {
       query: {
-        filter: '(&(CN=Security*)'
+        filter: '(&(CN=Security*))'
       },
       results: {
         users: [
@@ -200,8 +209,8 @@ module.exports = {
         ],
         other: [
           'security-test-01', 'security-test-02', 'security-audit-01'
-        ],
+        ]
       }
-    } ]
-  },
-};
+    }]
+  }
+}

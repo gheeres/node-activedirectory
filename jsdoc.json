@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "plugins/markdown"
+  ],
+  "opts": {
+    "encoding": "utf8",
+    "destination": "./doc/",
+    "recurse": true,
+    "private": true
+  },
+  "source": {
+    "include": [
+      "lib/"
+    ],
+    "includePattern": ".+\\.js"
+  }
+}
