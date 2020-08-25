@@ -1,7 +1,25 @@
 ActiveDirectory for Node
 =========
 
-[![CircleCI](https://circleci.com/gh/jsumners/node-activedirectory.svg?style=svg)](https://circleci.com/gh/jsumners/node-activedirectory)
+> ## Module Maintenance Notice
+> This module is minimally maintained. I, James Sumners, have not been in an
+> environment where I need to communicate with an Active Directory server in
+> over two years (as of this writing on 2020-08-25). Given that I do not need
+> this module for my own work, it is not a priority for me. I will continue
+> to review pull requests and issue releases as necessary, but to get the
+> "best" support possible:
+>
+> 1. Read through the module's source code to learn how to either resolve
+> your issue or to point out where the issue is.
+> 2. Open a Pull Request to fix the issue if you are able. If you're not able,
+> you should state _why_ in any issue you open.
+> 3. Provide a thorough replication of your problem if you are opening an issue
+> and not a Pull Request.
+>
+> If you rely on this module, it would be a great idea to start contributing
+> your own Pull Requests to resolve open issues or any issues you have
+> encountered. If I determine that you would be a good steward of the project,
+> I will invite you to take up full maintenance of it.
 
 ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations. This code was a port of an existing C# library (not published) that I had written a few years ago. Here are the key features
 
