@@ -1,7 +1,7 @@
 {
   "author": "George Heeres <gheeres@gmail.com>",
   "name": "activedirectory2",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "ActiveDirectory is an ldapjs client for authN (authentication) and authZ (authorization) for Microsoft Active Directory with range retrieval support for large Active Directory installations.",
   "contributors": [
     {
