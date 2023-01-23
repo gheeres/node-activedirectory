@@ -661,6 +661,7 @@ Currently supported ldapjs opts are:
 * attributes - attributes to select and return (if these are set, the server will return only these attributes). Defaults to the empty set, which means all attributes.
 * sizeLimit - the maximum number of entries to return. Defaults to 0 (unlimited).
 * timeLimit - the maximum amount of time the server should take in responding, in seconds. Defaults to 10. Lots of servers will ignore this.
+* includeNestedGroups - You can optionally pass here False if the results shouldn't include nested groups. Default is True.
 
 Options for activedirectory.js:
 
